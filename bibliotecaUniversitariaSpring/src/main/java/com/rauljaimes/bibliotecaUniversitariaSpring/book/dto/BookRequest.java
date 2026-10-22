@@ -1,5 +1,6 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.book.dto;
 
+import com.rauljaimes.bibliotecaUniversitariaSpring.book.anotation.ValidPublicationYear;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.ISBN;
 
@@ -16,15 +17,16 @@ public record BookRequest(
         String author,
 
         @NotNull(message = "The year must no be null")
+        @NotBlank(message = "The year must not contain blank spaces")
         @Min(value = 1500, message = "The year minimum must be 1500")
-        @Max(value = 2026, message = "The year maximum must be the current year")
+        @ValidPublicationYear
         Integer yearPublication,
 
         @NotNull(message = "The amount must not be null")
         @PositiveOrZero(message = "The amount must be zero o greater than zero")
         Integer amount,
 
-        @NotBlank(message = "The isbn must no contain blank spaces")
+        @NotBlank(message = "The ISBN must no contain blank spaces")
         @ISBN(message = "The ISBN format is invalid")
         String isbn,
 
