@@ -10,7 +10,7 @@ public class PublicationYearValidator implements
 
     @Override
     public boolean isValid(Integer year, ConstraintValidatorContext context) {
-        if(year == null) return true;
+        if(year == null) return true; //se puede declarar comoo false para no dejar pasar nulos
 
         return year <= Year.now().getValue();
     }
