@@ -1,35 +1,36 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.book.service;
 
-import com.rauljaimes.bibliotecaUniversitariaSpring.book.entity.BookEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookRequest;
+import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookResponse;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IBookService {
 
-    Optional<BookEntity> createBook(BookEntity bookEntity);
+     Optional<BookResponse> createBook(BookRequest bookRequest);
 
     void deleteBook(Long id);
 
-    Optional<BookEntity> findById(Long id);
+    Optional<BookResponse> findById(Long id);
 
-    Optional<BookEntity> fingByName(String name);
+    Optional<BookResponse> fingByTitle(String name);
 
-    Optional<BookEntity> findByISBN(String isbn);
+    Optional<BookResponse> findByISBN(String isbn);
 
-    List<BookEntity> findByYear(Integer year);
+    List<BookResponse> findByYear(Integer year);
 
-    List<BookEntity> findByAuthor(String author);
+    List<BookResponse> findByAuthor(String author);
 
-    List<BookEntity> findByGenre(String genre);
+    List<BookResponse> findByGenre(String genre);
 
-    List<BookEntity> findAll();
+    List<BookResponse> findAll();
 
     void sotfDelete(Long id);
 
-    Optional<BookEntity> updateBook(BookEntity bookEntity);
+    Optional<BookResponse> updateBook(BookRequest bookRequest);
 
-    void returnBook(BookEntity bookEntity);
+    void returnBook(BookRequest bookRequest);
 
-    void loanBook(BookEntity bookEntity);
+    void loanBook(BookRequest bookRequest);
 }

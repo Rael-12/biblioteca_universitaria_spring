@@ -38,9 +38,9 @@ public class BookEntity {
     private String isbn;
 
     @Column(name = "category", nullable = false)
-    @Enumerated
+   //@Enumerated
     private String category;
 
     @Column(name = "active",  nullable = false)
-    private Boolean active;
+    private boolean active;
 }
