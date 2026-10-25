@@ -2,10 +2,13 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.book.service;
 
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookResponse;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface IBookService {
 
      Optional<BookResponse> createBook(BookRequest bookRequest);
@@ -28,9 +31,9 @@ public interface IBookService {
 
     void sotfDelete(Long id);
 
-    Optional<BookResponse> updateBook(BookRequest bookRequest);
+    Optional<BookResponse> updateBook(BookRequest bookRequest, Long id);
 
-    void returnBook(BookRequest bookRequest);
+    void returnBook(Long id);
 
-    void loanBook(BookRequest bookRequest);
+    void loanBook(Long id);
 }

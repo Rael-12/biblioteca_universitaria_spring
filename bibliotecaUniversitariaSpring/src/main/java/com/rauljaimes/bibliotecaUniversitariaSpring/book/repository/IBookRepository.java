@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface IBookRepository extends JpaRepository<BookEntity, Long> {
 
     @Transactional
@@ -19,7 +21,17 @@ public interface IBookRepository extends JpaRepository<BookEntity, Long> {
         SET b.active = 0
         WHERE b.bookId = :id
         """)
-    void softDelete(@Param("id") Long id);
+    Integer softDelete(@Param("id") Long id);
+
+    @Transactional
+    @Modifying
+    @Query("""
+            UPDATE BookEntity b
+            SET b.amount_available = b.amount_available - 1
+            WHERE b.book_id = :id
+                        AND b.amountAvailable > 0
+            """)
+    Integer loanBook(@Param("id") Long id);
 
     @Transactional
     @Modifying
@@ -27,17 +39,9 @@ public interface IBookRepository extends JpaRepository<BookEntity, Long> {
             UPDATE BookEntity b
             SET b.amount_available = b.amount_available + 1
             WHERE b.book_id = :id
+                        AND b.amountAvailable < b.amount
             """)
-    void loanBook(@Param("id") Long id);
-
-    @Transactional
-    @Modifying
-    @Query("""
-            UPDATE BookEntity b
-            SET b.amount_available = b.amount_available + 1
-            WHERE b.book_id = :id
-            """)
-    void returnBook(@Param("id") Long id);
+    Integer returnBook(@Param("id") Long id);
 
 
    Optional<BookEntity> findByTitleContainingIgnoreCase(String title);

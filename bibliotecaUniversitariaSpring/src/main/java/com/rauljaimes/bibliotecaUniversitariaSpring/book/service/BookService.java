@@ -5,14 +5,17 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.entity.BookEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.mapper.BookMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.repository.IBookRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-public class BookService implements IBookService{
+@Service
+public class BookService implements IBookService {
     private final IBookRepository bookRepository;
-    private final BookMapper  bookMapper;
+    private final BookMapper bookMapper;
 
     public BookService(IBookRepository bookRepository, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
@@ -21,7 +24,19 @@ public class BookService implements IBookService{
 
     @Override
     public Optional<BookResponse> createBook(BookRequest bookRequest) {
-        return Optional.empty();
+        BookEntity book = BookEntity.builder()
+                .title(bookRequest.title())
+                .author(bookRequest.author())
+                .yearPublication(bookRequest.yearPublication())
+                .available(true)
+                .amount(bookRequest.amount())
+                .amountAvailable(bookRequest.amount())
+                .isbn(bookRequest.isbn())
+                .category(bookRequest.category())
+                .active(true)
+                .build();
+
+        return Optional.of(bookRepository.save(book)).map(bookMapper::entityToResponse);
     }
 
     @Override
@@ -36,29 +51,35 @@ public class BookService implements IBookService{
 
     @Override
     public Optional<BookResponse> fingByTitle(String title) {
-        return bookRepository.findByTitle(title.toLowerCase()).stream()
+        return bookRepository.findByTitleContainingIgnoreCase(title).stream()
                 .map(bookMapper::entityToResponse)
                 .findFirst();
     }
 
     @Override
     public Optional<BookResponse> findByISBN(String isbn) {
-        return Optional.ofNullable(bookRepository.findByISBN().stream().map(b -> bookMapper.entityToResponse(b)));
+        return bookRepository.findByIsbn(isbn).map(bookMapper::entityToResponse);
     }
 
     @Override
     public List<BookResponse> findByYear(Integer year) {
-        return List.of();
+        return bookRepository.findByYearPublication(year).stream()
+                .map(bookMapper::entityToResponse)
+                .toList();
     }
 
     @Override
     public List<BookResponse> findByAuthor(String author) {
-        return List.of();
+        return bookRepository.findByAuthor(author).stream()
+                .map(bookMapper::entityToResponse)
+                .toList();
     }
 
     @Override
     public List<BookResponse> findByGenre(String genre) {
-        return List.of();
+        return bookRepository.findByCategory(genre).stream()
+                .map(bookMapper::entityToResponse)
+                .toList();
     }
 
     @Override
@@ -68,23 +89,60 @@ public class BookService implements IBookService{
                 .toList();
     }
 
+    @Transactional
     @Override
     public void sotfDelete(Long id) {
+        Integer rowsAffect = bookRepository.softDelete(id);
 
+        if (rowsAffect == 0) {
+            BookEntity book = bookRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Book not found"));
+        }
     }
 
+    @Transactional
     @Override
-    public Optional<BookResponse> updateBook(BookRequest bookRequest) {
-        return Optional.empty();
+    public Optional<BookResponse> updateBook(BookRequest bookRequest, Long id) {
+        BookEntity bookEntity = bookRepository.getReferenceById(id);
+
+        bookEntity.setTitle(bookRequest.title());
+        bookEntity.setAuthor(bookRequest.author());
+        bookEntity.setYearPublication(bookRequest.yearPublication());
+        bookEntity.setAmount(bookRequest.amount());
+        bookEntity.setIsbn(bookRequest.isbn());
+        bookEntity.setCategory(bookRequest.category());
+
+        return Optional.of(bookRepository.save(bookEntity))
+                .map(bookMapper::entityToResponse);
     }
 
+    @Transactional
     @Override
-    public void returnBook(BookRequest bookRequest) {
+    public void returnBook(Long id) {
+        Integer rowsAffect = bookRepository.returnBook(id);
 
+        if (rowsAffect == 0) {
+            BookEntity book = bookRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Book not found"));
+
+            if (Objects.equals(book.getAmountAvailable(), book.getAmount())) {
+                throw new IllegalArgumentException("You can't return that book");
+            }
+        }
     }
 
+    @Transactional
     @Override
-    public void loanBook(BookRequest bookRequest) {
+    public void loanBook(Long id) {
+        Integer rowsAffect = bookRepository.loanBook(id);
 
+        if (rowsAffect == 0) {
+            BookEntity book = bookRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Book not found"));
+
+            if (Objects.equals(book.getAmountAvailable(), book.getAmount())) {
+                throw new IllegalArgumentException("book out of print");
+            }
+        }
     }
 }
