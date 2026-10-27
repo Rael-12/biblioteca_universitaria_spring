@@ -17,7 +17,7 @@ public interface IBookService {
 
     Optional<BookResponse> findById(Long id);
 
-    Optional<BookResponse> fingByTitle(String name);
+    Optional<BookResponse> findByTitle(String name);
 
     Optional<BookResponse> findByISBN(String isbn);
 

@@ -36,7 +36,8 @@ public class BookService implements IBookService {
                 .active(true)
                 .build();
 
-        return Optional.of(bookRepository.save(book)).map(bookMapper::entityToResponse);
+        return Optional.of(bookRepository.save(book))
+                .map(bookMapper::entityToResponse);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class BookService implements IBookService {
     }
 
     @Override
-    public Optional<BookResponse> fingByTitle(String title) {
+    public Optional<BookResponse> findByTitle(String title) {
         return bookRepository.findByTitleContainingIgnoreCase(title).stream()
                 .map(bookMapper::entityToResponse)
                 .findFirst();
@@ -112,7 +113,7 @@ public class BookService implements IBookService {
         bookEntity.setIsbn(bookRequest.isbn());
         bookEntity.setCategory(bookRequest.category());
 
-        return Optional.of(bookRepository.save(bookEntity))
+        return Optional.of(bookEntity)
                 .map(bookMapper::entityToResponse);
     }
 
