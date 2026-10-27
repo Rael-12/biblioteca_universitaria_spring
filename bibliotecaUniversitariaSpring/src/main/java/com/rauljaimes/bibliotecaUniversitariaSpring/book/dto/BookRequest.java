@@ -17,7 +17,6 @@ public record BookRequest(
         String author,
 
         @NotNull(message = "The year must no be null")
-        @NotBlank(message = "The year must not contain blank spaces")
         @Min(value = 1500, message = "The year minimum must be 1500")
         @ValidPublicationYear
         Integer yearPublication,

@@ -18,8 +18,8 @@ public interface IBookRepository extends JpaRepository<BookEntity, Long> {
     @Modifying
     @Query("""
         UPDATE BookEntity b
-        SET b.active = 0
-        WHERE b.bookId = :id
+        SET b.active = false
+        WHERE b.id = :id
         """)
     Integer softDelete(@Param("id") Long id);
 
@@ -27,8 +27,8 @@ public interface IBookRepository extends JpaRepository<BookEntity, Long> {
     @Modifying
     @Query("""
             UPDATE BookEntity b
-            SET b.amount_available = b.amount_available - 1
-            WHERE b.book_id = :id
+            SET b.amountAvailable = b.amountAvailable - 1
+            WHERE b.id = :id
                         AND b.amountAvailable > 0
             """)
     Integer loanBook(@Param("id") Long id);
@@ -37,8 +37,8 @@ public interface IBookRepository extends JpaRepository<BookEntity, Long> {
     @Modifying
     @Query("""
             UPDATE BookEntity b
-            SET b.amount_available = b.amount_available + 1
-            WHERE b.book_id = :id
+            SET b.amountAvailable = b.amountAvailable + 1
+            WHERE b.id = :id
                         AND b.amountAvailable < b.amount
             """)
     Integer returnBook(@Param("id") Long id);
@@ -52,7 +52,7 @@ public interface IBookRepository extends JpaRepository<BookEntity, Long> {
 
    List<BookEntity> findByYearPublication(Integer yearPublication);
 
-   boolean isActive(Long id);
+   //boolean isActive(Long id);
 
    List<BookEntity> findByCategory(String category);
 }

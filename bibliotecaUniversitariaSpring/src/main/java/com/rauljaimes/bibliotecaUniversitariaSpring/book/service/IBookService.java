@@ -2,13 +2,12 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.book.service;
 
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookResponse;
-import org.hibernate.annotations.SQLRestriction;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Service
 public interface IBookService {
 
      Optional<BookResponse> createBook(BookRequest bookRequest);
