@@ -3,6 +3,7 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.book.service;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.entity.BookEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.book.exceptions.BookNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.mapper.BookMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.repository.IBookRepository;
 import jakarta.transaction.Transactional;
@@ -97,7 +98,7 @@ public class BookService implements IBookService {
 
         if (rowsAffect == 0) {
             BookEntity book = bookRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Book not found"));
+                    .orElseThrow(() -> new BookNotFoundException("Book not found"));
         }
     }
 
@@ -124,7 +125,7 @@ public class BookService implements IBookService {
 
         if (rowsAffect == 0) {
             BookEntity book = bookRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Book not found"));
+                    .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
             if (Objects.equals(book.getAmountAvailable(), book.getAmount())) {
                 throw new IllegalArgumentException("You can't return that book");
@@ -139,9 +140,9 @@ public class BookService implements IBookService {
 
         if (rowsAffect == 0) {
             BookEntity book = bookRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Book not found"));
+                    .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
-            if (Objects.equals(book.getAmountAvailable(), book.getAmount())) {
+            if (book.getAmountAvailable() == 0) {
                 throw new IllegalArgumentException("book out of print");
             }
         }
