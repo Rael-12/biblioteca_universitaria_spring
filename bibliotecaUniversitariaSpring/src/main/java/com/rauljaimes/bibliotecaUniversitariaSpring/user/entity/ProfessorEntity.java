@@ -9,7 +9,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Professor extends User{
+public class ProfessorEntity extends UserEntity {
 
     @Column(nullable = false, length = 100)
     private String department;

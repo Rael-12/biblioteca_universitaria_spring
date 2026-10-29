@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +43,9 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime updated_at;
+
+    @Column(nullable = false)
+    private int loanBooks;
 
     @PrePersist
     protected void onCreate() {

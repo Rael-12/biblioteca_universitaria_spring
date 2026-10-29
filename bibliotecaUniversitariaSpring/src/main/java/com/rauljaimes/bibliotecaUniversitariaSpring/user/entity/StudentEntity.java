@@ -9,7 +9,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Student extends User{
+public class StudentEntity extends UserEntity {
 
     @Column(nullable = false, length = 45)
     private String semester;
