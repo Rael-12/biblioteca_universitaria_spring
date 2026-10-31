@@ -1,4 +1,4 @@
-package com.rauljaimes.bibliotecaUniversitariaSpring.user.dto;
+package com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.user;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

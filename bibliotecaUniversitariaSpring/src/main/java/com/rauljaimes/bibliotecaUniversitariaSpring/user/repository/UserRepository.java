@@ -29,13 +29,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Integer softDelete(Long id);
 
     @Query(value = """
-                SELECT users.loan_books
-                FROM users
-                WHERE id = ?
-            """, nativeQuery = true)
-    Integer loanBooks(Long id);
-
-    @Query(value = """
             UPDATE users
             SET users.loan_books = loan_books + 1
             WHERE users.id = ?

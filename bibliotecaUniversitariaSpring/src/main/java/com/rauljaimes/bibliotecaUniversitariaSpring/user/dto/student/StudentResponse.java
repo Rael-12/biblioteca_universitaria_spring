@@ -1,6 +1,6 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.student;
 
-import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.IDataUser;
+import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.user.IDataUser;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
