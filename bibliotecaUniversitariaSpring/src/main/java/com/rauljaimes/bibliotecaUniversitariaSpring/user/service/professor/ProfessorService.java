@@ -22,7 +22,17 @@ public class ProfessorService implements IProfessorService{
 
     @Override
     public Optional<ProfessorResponse> createProfessor(ProfessorRequest professorRequest) {
-        return Optional.empty();
+        ProfessorEntity professor = ProfessorEntity.builder()
+                .firstName(professorRequest.firstName())
+                .lastName(professorRequest.lastName())
+                .email(professorRequest.email())
+                .phoneNumber(String.valueOf(professorRequest.phoneNumber()))
+                .birthdate(professorRequest.birthdate())
+                .loanBooks(0)
+                .department(professorRequest.department())
+                .build();
+
+        return Optional.of(profeRepository.save(professor)).map(userMapper::professorEntityToResponse);
     }
 
     @Override
