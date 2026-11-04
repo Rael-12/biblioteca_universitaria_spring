@@ -3,6 +3,7 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.user.service.student;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.student.StudentRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.student.StudentResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.StudentEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.StudentRepository;
 import jakarta.transaction.Transactional;
@@ -81,7 +82,7 @@ public class StudentService implements IStudentService{
 
         if(rowsAffect == 0){
             StudentEntity student = studentRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
 
             if(student.getLoanBooks() == 5)
                 throw new IllegalArgumentException("No more books can be lent to the user");
@@ -95,7 +96,7 @@ public class StudentService implements IStudentService{
 
         if(rowsAffect == 0){
             StudentEntity student = studentRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
 
             if(student.getLoanBooks() == 0)
                 throw new IllegalArgumentException("You can no longer return any more books");

@@ -3,6 +3,7 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.user.service.professor;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.professor.ProfessorRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.professor.ProfessorResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.ProfessorEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.ProfessorRepository;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ public class ProfessorService implements IProfessorService{
 
         if(rowsAffect == 0){
             ProfessorEntity student = profeRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
 
             if(student.getLoanBooks() == 0)
                 throw new IllegalArgumentException("You can no longer return any more books");
@@ -74,7 +75,7 @@ public class ProfessorService implements IProfessorService{
 
         if(rowsAffect == 0){
             ProfessorEntity student = profeRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
 
             if(student.getLoanBooks() == 0)
                 throw new IllegalArgumentException("You can no longer return any more books");
