@@ -19,6 +19,12 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public Optional<UserResponse> findById(Long id) {
+        return userRepository.findById(id)
+                .map(userMapper::userEntityToUserResponse);
+    }
+
+    @Override
     public List<UserResponse> findAll() {
         return userRepository.findAll().stream()
                 .map(userMapper::userEntityToUserResponse)

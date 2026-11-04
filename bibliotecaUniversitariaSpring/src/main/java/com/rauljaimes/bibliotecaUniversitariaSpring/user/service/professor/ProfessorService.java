@@ -31,6 +31,12 @@ public class ProfessorService implements IProfessorService{
     }
 
     @Override
+    public Optional<ProfessorResponse> findById(Long id) {
+        return profeRepository.findById(id)
+                .map(userMapper::professorEntityToResponse);
+    }
+
+    @Override
     public List<ProfessorResponse> findByDepartment(String department) {
         return profeRepository.findByDepartment(department).stream()
                 .map(userMapper::professorEntityToResponse)

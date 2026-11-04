@@ -2,7 +2,6 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.user.service.professor;
 
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.professor.ProfessorRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.professor.ProfessorResponse;
-import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.ProfessorEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +13,8 @@ public interface IProfessorService {
     Optional<ProfessorResponse> createProfessor(ProfessorRequest professorRequest);
 
     List<ProfessorResponse> findAll();
+
+    Optional<ProfessorResponse> findById(Long id);
 
     List<ProfessorResponse> findByDepartment(String department);
 
