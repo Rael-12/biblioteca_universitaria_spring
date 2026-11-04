@@ -5,10 +5,12 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.professor.Professor
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.ProfessorEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.ProfessorRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class ProfessorService implements IProfessorService{
     private final ProfessorRepository profeRepository;
     private final IUserMapper userMapper;

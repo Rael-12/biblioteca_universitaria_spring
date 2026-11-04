@@ -5,10 +5,12 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.user.UserResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.UserEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final IUserMapper userMapper;

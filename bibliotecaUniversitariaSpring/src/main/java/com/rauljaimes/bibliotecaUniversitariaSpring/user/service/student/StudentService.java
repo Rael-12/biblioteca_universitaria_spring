@@ -6,10 +6,12 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.StudentEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.StudentRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class StudentService implements IStudentService{
     private final StudentRepository studentRepository;
     private final IUserMapper userMapper;
