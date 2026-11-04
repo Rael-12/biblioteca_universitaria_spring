@@ -66,6 +66,12 @@ public class StudentService implements IStudentService{
                 .toList();
     }
 
+    @Override
+    public Optional<StudentResponse> findById(Long id) {
+        return studentRepository.findById(id)
+                .map(userMapper::studentEntityToResponse);
+    }
+
     @Transactional
     @Override
     public void loanBook(Long id) {

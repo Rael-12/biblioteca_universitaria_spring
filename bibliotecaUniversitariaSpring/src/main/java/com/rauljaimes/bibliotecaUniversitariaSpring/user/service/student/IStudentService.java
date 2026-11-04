@@ -20,6 +20,8 @@ public interface IStudentService {
 
     List<StudentResponse> findBySemesterAndDegree(String semester, String degree);
 
+    Optional<StudentResponse> findById(Long id);
+
     void loanBook(Long id);
 
     void returnBook(Long id);

@@ -10,6 +10,8 @@ import java.util.Optional;
 @Service
 public interface IUserService {
 
+    Optional<UserResponse> findById(Long id);
+
     List<UserResponse> findAll();
 
     List<UserResponse> findByFirstName(String firstName);
