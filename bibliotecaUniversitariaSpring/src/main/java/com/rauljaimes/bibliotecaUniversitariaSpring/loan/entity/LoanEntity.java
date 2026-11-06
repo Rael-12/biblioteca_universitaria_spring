@@ -46,4 +46,9 @@ public class LoanEntity {
 
     @Column(name = "renewed_count", nullable = false)
     private Long renewedCount;
+
+    @PrePersist
+    protected void onCreate() {
+        this.dateLoan = LocalDate.now();
+    }
 }
