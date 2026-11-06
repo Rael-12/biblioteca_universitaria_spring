@@ -1,5 +1,7 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.loan.entity;
 
+import com.rauljaimes.bibliotecaUniversitariaSpring.book.entity.BookEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,11 +21,13 @@ public class LoanEntity {
     @Column(name = "loan_id", unique = true)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", nullable = false )
+    private UserEntity user;
 
-    @Column(name = "book_id", nullable = false)
-    private Long bookId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false )
+    private BookEntity book;
 
     @Column(name = "active", nullable = false)
     private Boolean active;

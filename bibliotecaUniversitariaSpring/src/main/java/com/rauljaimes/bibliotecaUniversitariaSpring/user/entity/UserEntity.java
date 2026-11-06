@@ -1,11 +1,14 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.user.entity;
 
+import com.rauljaimes.bibliotecaUniversitariaSpring.loan.entity.LoanEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -47,6 +50,9 @@ public class UserEntity {
 
     @Column(nullable = false)
     private int loanBooks;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<LoanEntity> loans = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
