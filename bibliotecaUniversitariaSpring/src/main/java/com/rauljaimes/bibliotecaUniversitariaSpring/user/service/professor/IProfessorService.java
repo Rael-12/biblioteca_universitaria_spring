@@ -19,6 +19,4 @@ public interface IProfessorService {
     List<ProfessorResponse> findByDepartment(String department);
 
     void loanBook(Long id);
-
-    void returnBook(Long id);
 }

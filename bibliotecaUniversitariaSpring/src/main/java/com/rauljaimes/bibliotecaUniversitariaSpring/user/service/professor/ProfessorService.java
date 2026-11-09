@@ -61,24 +61,12 @@ public class ProfessorService implements IProfessorService{
         Integer rowsAffect = profeRepository.returnBook(id);
 
         if(rowsAffect == 0){
-            ProfessorEntity student = profeRepository.findById(id)
+            ProfessorEntity professor = profeRepository.findById(id)
                     .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-            if(student.getLoanBooks() == 0)
+            if(professor.getLoanBooks() == 0)
                 throw new IllegalArgumentException("You can no longer return any more books");
         }
     }
 
-    @Override
-    public void returnBook(Long id) {
-        Integer rowsAffect = profeRepository.returnBook(id);
-
-        if(rowsAffect == 0){
-            ProfessorEntity student = profeRepository.findById(id)
-                    .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-            if(student.getLoanBooks() == 0)
-                throw new IllegalArgumentException("You can no longer return any more books");
-        }
-    }
 }

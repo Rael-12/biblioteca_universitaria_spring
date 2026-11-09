@@ -88,18 +88,4 @@ public class StudentService implements IStudentService{
                 throw new IllegalArgumentException("No more books can be lent to the user");
         }
     }
-
-    @Transactional
-    @Override
-    public void returnBook(Long id) {
-        Integer rowsAffect = studentRepository.returnBook(id);
-
-        if(rowsAffect == 0){
-            StudentEntity student = studentRepository.findById(id)
-                    .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-            if(student.getLoanBooks() == 0)
-                throw new IllegalArgumentException("You can no longer return any more books");
-        }
-    }
 }

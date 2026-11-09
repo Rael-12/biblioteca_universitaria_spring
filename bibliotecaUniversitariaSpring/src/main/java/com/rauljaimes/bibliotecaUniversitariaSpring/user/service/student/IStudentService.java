@@ -23,6 +23,4 @@ public interface IStudentService {
     Optional<StudentResponse> findById(Long id);
 
     void loanBook(Long id);
-
-    void returnBook(Long id);
 }
