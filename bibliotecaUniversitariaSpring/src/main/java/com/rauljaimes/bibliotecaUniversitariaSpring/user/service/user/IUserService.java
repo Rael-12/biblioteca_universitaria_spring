@@ -27,4 +27,6 @@ public interface IUserService {
     void delete(Long id);
 
     Optional<UserResponse> updateUser(UserRequest userRequest, Long id);
+
+    void returnBook(Long id);
 }

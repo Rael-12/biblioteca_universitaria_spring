@@ -2,13 +2,18 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.user.service.user;
 
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.user.UserRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.user.UserResponse;
+import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.StudentEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.UserEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final IUserMapper userMapper;
@@ -63,7 +68,7 @@ public class UserService implements IUserService {
 
         if (rowsAffect == 0) {
             UserEntity user = userRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("user not found"));
+                    .orElseThrow(() -> new UserNotFoundException("user not found"));
         }
     }
 
@@ -75,7 +80,7 @@ public class UserService implements IUserService {
     @Override
     public Optional<UserResponse> updateUser(UserRequest userRequest, Long id) {
         UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         user.setFirstName(userRequest.firstName());
         user.setLastName(userRequest.lastName());
@@ -86,5 +91,19 @@ public class UserService implements IUserService {
 
         return Optional.of(userRepository.save(user))
                 .map(userMapper::userEntityToUserResponse);
+    }
+
+    @Transactional
+    @Override
+    public void returnBook(Long id) {
+        Integer rowsAffect = userRepository.returnBook(id);
+
+        if(rowsAffect == 0){
+            UserEntity user = userRepository.findById(id)
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+            if(user.getLoanBooks() == 0)
+                throw new IllegalArgumentException("You can no longer return any more books");
+        }
     }
 }

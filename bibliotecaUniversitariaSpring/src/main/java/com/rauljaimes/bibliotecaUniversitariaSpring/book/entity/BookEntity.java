@@ -1,16 +1,18 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.book.entity;
 
+import com.rauljaimes.bibliotecaUniversitariaSpring.loan.entity.LoanEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "books")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 public class BookEntity {
     @Id
@@ -45,4 +47,7 @@ public class BookEntity {
 
     @Column(name = "active",  nullable = false)
     private boolean active;
+
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
+    private List<LoanEntity> loans = new ArrayList<>();
 }

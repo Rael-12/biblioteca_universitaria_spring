@@ -3,13 +3,16 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.user.service.student;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.student.StudentRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.student.StudentResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.StudentEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.StudentRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class StudentService implements IStudentService{
     private final StudentRepository studentRepository;
     private final IUserMapper userMapper;
@@ -79,24 +82,10 @@ public class StudentService implements IStudentService{
 
         if(rowsAffect == 0){
             StudentEntity student = studentRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
 
             if(student.getLoanBooks() == 5)
                 throw new IllegalArgumentException("No more books can be lent to the user");
-        }
-    }
-
-    @Transactional
-    @Override
-    public void returnBook(Long id) {
-        Integer rowsAffect = studentRepository.returnBook(id);
-
-        if(rowsAffect == 0){
-            StudentEntity student = studentRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-            if(student.getLoanBooks() == 0)
-                throw new IllegalArgumentException("You can no longer return any more books");
         }
     }
 }

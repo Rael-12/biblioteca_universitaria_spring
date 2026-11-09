@@ -3,12 +3,15 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.user.service.professor;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.professor.ProfessorRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.professor.ProfessorResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.ProfessorEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.ProfessorRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class ProfessorService implements IProfessorService{
     private final ProfessorRepository profeRepository;
     private final IUserMapper userMapper;
@@ -20,7 +23,17 @@ public class ProfessorService implements IProfessorService{
 
     @Override
     public Optional<ProfessorResponse> createProfessor(ProfessorRequest professorRequest) {
-        return Optional.empty();
+        ProfessorEntity professor = ProfessorEntity.builder()
+                .firstName(professorRequest.firstName())
+                .lastName(professorRequest.lastName())
+                .email(professorRequest.email())
+                .phoneNumber(String.valueOf(professorRequest.phoneNumber()))
+                .birthdate(professorRequest.birthdate())
+                .loanBooks(0)
+                .department(professorRequest.department())
+                .build();
+
+        return Optional.of(profeRepository.save(professor)).map(userMapper::professorEntityToResponse);
     }
 
     @Override
@@ -48,24 +61,12 @@ public class ProfessorService implements IProfessorService{
         Integer rowsAffect = profeRepository.returnBook(id);
 
         if(rowsAffect == 0){
-            ProfessorEntity student = profeRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            ProfessorEntity professor = profeRepository.findById(id)
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-            if(student.getLoanBooks() == 0)
+            if(professor.getLoanBooks() == 0)
                 throw new IllegalArgumentException("You can no longer return any more books");
         }
     }
 
-    @Override
-    public void returnBook(Long id) {
-        Integer rowsAffect = profeRepository.returnBook(id);
-
-        if(rowsAffect == 0){
-            ProfessorEntity student = profeRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-            if(student.getLoanBooks() == 0)
-                throw new IllegalArgumentException("You can no longer return any more books");
-        }
-    }
 }
