@@ -7,6 +7,7 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.book.service.IBookService;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.dto.LoanRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.dto.LoanResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.entity.LoanEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.loan.exceptions.LoanNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.mapper.ILoanMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.repository.ILoansRepository;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.ProfessorEntity;
@@ -90,7 +91,7 @@ public class LoanService implements ILoanService {
             throw new IllegalArgumentException("Id must not be null");
 
         if (!loansRepository.existsById(id))
-            throw new IllegalArgumentException("Loan not found");
+            throw new LoanNotFoundException("Loan not found");
 
         Long rowsAffect = loansRepository.softDelete(id);
 
@@ -106,7 +107,7 @@ public class LoanService implements ILoanService {
             throw new IllegalArgumentException("Id must not be null");
 
         if (!loansRepository.existsById(id))
-            throw new IllegalArgumentException("Loan not found");
+            throw new LoanNotFoundException("Loan not found");
 
         loansRepository.deleteById(id);
     }
@@ -121,7 +122,7 @@ public class LoanService implements ILoanService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         LoanEntity loan = loansRepository.findByUserAndBook(user, book)
-                .orElseThrow(() -> new IllegalArgumentException("Loan not found"));
+                .orElseThrow(() -> new LoanNotFoundException("Loan not found"));
 
         bookService.returnBook(book.getId());
         userService.returnBook(user.getId());
@@ -137,7 +138,7 @@ public class LoanService implements ILoanService {
         Long rowsAffect = loansRepository.changeStaus(status, loanId);
 
         if (rowsAffect == 0 && !loansRepository.existsById(loanId))
-            throw new IllegalArgumentException("Loan not found");
+            throw new LoanNotFoundException("Loan not found");
 
         return status;
     }
@@ -151,7 +152,7 @@ public class LoanService implements ILoanService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         LoanEntity loan = loansRepository.findByUserAndBook(user, book)
-                .orElseThrow(() -> new IllegalArgumentException("Loan not found"));
+                .orElseThrow(() -> new LoanNotFoundException("Loan not found"));
 
         switch (user) {
             case StudentEntity student -> loan.setDueDate(LocalDate.now().plusDays(15));
@@ -174,10 +175,8 @@ public class LoanService implements ILoanService {
 
     @Override
     public List<LoanResponse> findByBook(Long id) {
-        BookEntity book = bookRepository.findById(id).orElse(null);
-
-        if (book == null)
-            throw new BookNotFoundException("Book not found");
+        BookEntity book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
         return loansRepository.findByBook(book).stream()
                 .map(loanMapper::loanEntityToResponse)
@@ -186,12 +185,10 @@ public class LoanService implements ILoanService {
 
     @Override
     public List<LoanResponse> findByUser(Long id) {
-        Optional<UserEntity> user = userRepository.findById(id);
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (user.isEmpty())
-            throw new UserNotFoundException("User not found");
-
-        return loansRepository.findByUser(user.get()).stream()
+        return loansRepository.findByUser(user).stream()
                 .map(loanMapper::loanEntityToResponse)
                 .toList();
     }

@@ -44,11 +44,4 @@ public class ProfessorController {
         profService.loanBook(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-    @PutMapping("/returBook/{id}")
-    public ResponseEntity<Void> returnBook(@PathVariable Long id){
-        profService.returnBook(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
 }

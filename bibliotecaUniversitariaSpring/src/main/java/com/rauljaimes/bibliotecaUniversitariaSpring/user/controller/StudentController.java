@@ -54,10 +54,4 @@ public class StudentController {
         studentService.loanBook(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-    @PutMapping("returnBook/{id}")
-    public ResponseEntity<Void> returnBook(@PathVariable Long id){
-        studentService.returnBook(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 }
