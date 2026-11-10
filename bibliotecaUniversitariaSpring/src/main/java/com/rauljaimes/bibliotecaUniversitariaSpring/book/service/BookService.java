@@ -6,8 +6,8 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.book.entity.BookEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.exceptions.BookNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.mapper.BookMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.repository.IBookRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +23,7 @@ public class BookService implements IBookService {
         this.bookMapper = bookMapper;
     }
 
+    @Transactional
     @Override
     public Optional<BookResponse> createBook(BookRequest bookRequest) {
         BookEntity book = BookEntity.builder()
@@ -41,16 +42,19 @@ public class BookService implements IBookService {
                 .map(bookMapper::entityToResponse);
     }
 
+    @Transactional
     @Override
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<BookResponse> findById(Long id) {
         return bookRepository.findById(id).map(bookMapper::entityToResponse);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<BookResponse> findByTitle(String title) {
         return bookRepository.findByTitleContainingIgnoreCase(title).stream()
@@ -58,11 +62,13 @@ public class BookService implements IBookService {
                 .findFirst();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<BookResponse> findByISBN(String isbn) {
         return bookRepository.findByIsbn(isbn).map(bookMapper::entityToResponse);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookResponse> findByYear(Integer year) {
         return bookRepository.findByYearPublication(year).stream()
@@ -70,6 +76,7 @@ public class BookService implements IBookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookResponse> findByAuthor(String author) {
         return bookRepository.findByAuthor(author).stream()
@@ -77,6 +84,7 @@ public class BookService implements IBookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookResponse> findByGenre(String genre) {
         return bookRepository.findByCategory(genre).stream()
@@ -84,6 +92,7 @@ public class BookService implements IBookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookResponse> findAll() {
         return bookRepository.findAll().stream()

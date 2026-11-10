@@ -14,7 +14,6 @@ import java.util.Optional;
 @Repository
 public interface IBookRepository extends JpaRepository<BookEntity, Long> {
 
-    @Transactional
     @Modifying
     @Query("""
         UPDATE BookEntity b
@@ -23,7 +22,6 @@ public interface IBookRepository extends JpaRepository<BookEntity, Long> {
         """)
     Integer softDelete(@Param("id") Long id);
 
-    @Transactional
     @Modifying
     @Query("""
             UPDATE BookEntity b
@@ -33,7 +31,6 @@ public interface IBookRepository extends JpaRepository<BookEntity, Long> {
             """)
     Integer loanBook(@Param("id") Long id);
 
-    @Transactional
     @Modifying
     @Query("""
             UPDATE BookEntity b
