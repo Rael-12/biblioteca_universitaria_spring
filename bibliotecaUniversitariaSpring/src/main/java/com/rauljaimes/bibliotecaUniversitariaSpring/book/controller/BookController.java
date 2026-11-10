@@ -92,11 +92,9 @@ public class BookController {
     @PostMapping()
     public ResponseEntity<BookResponse> createBook(@Valid @RequestBody
                                                    BookRequest bookRequest) {
-        Optional<BookResponse> book = bookService.createBook(bookRequest);
+        BookResponse book = bookService.createBook(bookRequest);
 
-        return book.map(bookResponse -> ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(bookResponse)).orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+        return ResponseEntity.ok(book);
 
     }
 
