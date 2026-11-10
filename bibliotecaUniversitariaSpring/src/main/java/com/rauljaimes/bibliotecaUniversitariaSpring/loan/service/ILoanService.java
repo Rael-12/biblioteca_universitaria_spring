@@ -14,8 +14,6 @@ public interface ILoanService {
 
     Long softDelete(Long id);
 
-    void hardDelete(Long id);
-
     void returnBook(LoanRequest loanRequest);
 
     String changeStatus(Long loanId, String status);

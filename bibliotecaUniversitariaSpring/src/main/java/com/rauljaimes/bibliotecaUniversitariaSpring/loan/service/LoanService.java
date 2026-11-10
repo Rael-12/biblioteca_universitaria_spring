@@ -18,8 +18,8 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.UserReposito
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.service.professor.IProfessorService;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.service.student.IStudentService;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.service.user.IUserService;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -85,6 +85,7 @@ public class LoanService implements ILoanService {
                 .map(loanMapper::loanEntityToResponse);
     }
 
+    @Transactional
     @Override
     public Long softDelete(Long id) {
         if (id == null)
@@ -99,17 +100,6 @@ public class LoanService implements ILoanService {
             throw new IllegalArgumentException("The deletion could not be performed");
 
         return rowsAffect;
-    }
-
-    @Override
-    public void hardDelete(Long id) {
-        if (id == null)
-            throw new IllegalArgumentException("Id must not be null");
-
-        if (!loansRepository.existsById(id))
-            throw new LoanNotFoundException("Loan not found");
-
-        loansRepository.deleteById(id);
     }
 
     @Transactional
@@ -133,6 +123,7 @@ public class LoanService implements ILoanService {
         loansRepository.save(loan);
     }
 
+    @Transactional
     @Override
     public String changeStatus(Long loanId, String status) {
         Long rowsAffect = loansRepository.changeStaus(status, loanId);
@@ -143,6 +134,7 @@ public class LoanService implements ILoanService {
         return status;
     }
 
+    @Transactional
     @Override
     public Optional<LoanResponse> renewBook(LoanRequest loanRequest) {
         BookEntity book = bookRepository.findById(loanRequest.bookId())
@@ -166,6 +158,7 @@ public class LoanService implements ILoanService {
                 .map(loanMapper::loanEntityToResponse);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<LoanResponse> findAll() {
         return loansRepository.findAll().stream()
@@ -173,6 +166,7 @@ public class LoanService implements ILoanService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<LoanResponse> findByBook(Long id) {
         BookEntity book = bookRepository.findById(id)
@@ -183,6 +177,7 @@ public class LoanService implements ILoanService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<LoanResponse> findByUser(Long id) {
         UserEntity user = userRepository.findById(id)
@@ -193,6 +188,7 @@ public class LoanService implements ILoanService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<LoanResponse> findById(Long id) {
         return loansRepository.findById(id)
