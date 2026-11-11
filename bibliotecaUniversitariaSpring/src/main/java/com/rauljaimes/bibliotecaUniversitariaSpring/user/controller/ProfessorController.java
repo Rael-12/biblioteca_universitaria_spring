@@ -21,7 +21,7 @@ public class ProfessorController {
 
     @PostMapping()
     public ResponseEntity<ProfessorResponse> createProfessor(@Valid @RequestBody ProfessorRequest professorRequest){
-        return ResponseEntity.of(profService.createProfessor(professorRequest));
+        return ResponseEntity.ok(profService.createProfessor(professorRequest));
     }
 
     @GetMapping()

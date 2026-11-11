@@ -12,28 +12,23 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProfessorService implements IProfessorService{
+public class ProfessorService implements IProfessorService {
     private final ProfessorRepository profeRepository;
     private final IUserMapper userMapper;
+    private final ProfessorEntity professorEntity;
 
-    public ProfessorService(ProfessorRepository profeRepository, IUserMapper userMapper) {
+    public ProfessorService(ProfessorRepository profeRepository, IUserMapper userMapper, ProfessorEntity professorEntity) {
         this.profeRepository = profeRepository;
         this.userMapper = userMapper;
+        this.professorEntity = professorEntity;
     }
 
     @Override
-    public Optional<ProfessorResponse> createProfessor(ProfessorRequest professorRequest) {
-        ProfessorEntity professor = ProfessorEntity.builder()
-                .firstName(professorRequest.firstName())
-                .lastName(professorRequest.lastName())
-                .email(professorRequest.email())
-                .phoneNumber(String.valueOf(professorRequest.phoneNumber()))
-                .birthdate(professorRequest.birthdate())
-                .loanBooks(0)
-                .department(professorRequest.department())
-                .build();
+    public ProfessorResponse createProfessor(ProfessorRequest pr) {
+        ProfessorEntity professor = professorEntity.createProfessor(pr.firstName(), pr.lastName(), pr.email(),
+                String.valueOf(pr.phoneNumber()), pr.birthdate(), pr.department());
 
-        return Optional.of(profeRepository.save(professor)).map(userMapper::professorEntityToResponse);
+        return userMapper.professorEntityToResponse(profeRepository.save(professor));
     }
 
     @Override
@@ -58,15 +53,9 @@ public class ProfessorService implements IProfessorService{
 
     @Override
     public void loanBook(Long id) {
-        Integer rowsAffect = profeRepository.returnBook(id);
-
-        if(rowsAffect == 0){
-            ProfessorEntity professor = profeRepository.findById(id)
-                    .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-            if(professor.getLoanBooks() == 0)
-                throw new IllegalArgumentException("You can no longer return any more books");
-        }
+        ProfessorEntity profe = profeRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        profe.loanBook();
+        profeRepository.save(profe);
     }
-
 }

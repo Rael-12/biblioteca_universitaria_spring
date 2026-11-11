@@ -2,7 +2,6 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.user.service.user;
 
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.user.UserRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.user.UserResponse;
-import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.StudentEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.UserEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;

@@ -87,7 +87,6 @@ public class BookController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    //todo aqui van los valores de los objetos con requestBody
 
     @PostMapping()
     public ResponseEntity<BookResponse> createBook(@Valid @RequestBody
