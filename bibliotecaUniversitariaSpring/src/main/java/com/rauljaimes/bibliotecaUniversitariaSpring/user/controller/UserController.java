@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("api/${api.version}/users")
 public class UserController {
     private final IUserService userService;
 
@@ -59,7 +59,7 @@ public class UserController {
         return ResponseEntity.of(userService.findById(id));
     }
 
-    @PutMapping("/softDelete/{id}")
+    @DeleteMapping("/softDelete/{id}")
     public ResponseEntity<Void> softDelete(@PathVariable Long id) {
         userService.softDelete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
