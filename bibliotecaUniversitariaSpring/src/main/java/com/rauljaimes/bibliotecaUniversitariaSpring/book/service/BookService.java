@@ -6,51 +6,46 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.book.entity.BookEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.exceptions.BookNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.mapper.BookMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.repository.IBookRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class BookService implements IBookService {
     private final IBookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final BookEntity bookEntity;
 
-    public BookService(IBookRepository bookRepository, BookMapper bookMapper) {
+    public BookService(IBookRepository bookRepository, BookMapper bookMapper, BookEntity bookEntity) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
+        this.bookEntity = bookEntity;
     }
 
+    @Transactional
     @Override
-    public Optional<BookResponse> createBook(BookRequest bookRequest) {
-        BookEntity book = BookEntity.builder()
-                .title(bookRequest.title())
-                .author(bookRequest.author())
-                .yearPublication(bookRequest.yearPublication())
-                .available(true)
-                .amount(bookRequest.amount())
-                .amountAvailable(bookRequest.amount())
-                .isbn(bookRequest.isbn())
-                .category(bookRequest.category())
-                .active(true)
-                .build();
+    public BookResponse createBook(BookRequest br) {
+        BookEntity book = bookEntity.createBook(br.title(), br.author(), br.yearPublication(),
+                br.amount(), br.isbn(), br.category());
 
-        return Optional.of(bookRepository.save(book))
-                .map(bookMapper::entityToResponse);
+        return bookMapper.entityToResponse(bookRepository.save(book));
     }
 
+    @Transactional
     @Override
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<BookResponse> findById(Long id) {
         return bookRepository.findById(id).map(bookMapper::entityToResponse);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<BookResponse> findByTitle(String title) {
         return bookRepository.findByTitleContainingIgnoreCase(title).stream()
@@ -58,11 +53,13 @@ public class BookService implements IBookService {
                 .findFirst();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<BookResponse> findByISBN(String isbn) {
         return bookRepository.findByIsbn(isbn).map(bookMapper::entityToResponse);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookResponse> findByYear(Integer year) {
         return bookRepository.findByYearPublication(year).stream()
@@ -70,6 +67,7 @@ public class BookService implements IBookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookResponse> findByAuthor(String author) {
         return bookRepository.findByAuthor(author).stream()
@@ -77,6 +75,7 @@ public class BookService implements IBookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookResponse> findByGenre(String genre) {
         return bookRepository.findByCategory(genre).stream()
@@ -84,6 +83,7 @@ public class BookService implements IBookService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<BookResponse> findAll() {
         return bookRepository.findAll().stream()
@@ -94,57 +94,43 @@ public class BookService implements IBookService {
     @Transactional
     @Override
     public void sotfDelete(Long id) {
-        Integer rowsAffect = bookRepository.softDelete(id);
+        BookEntity book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
-        if (rowsAffect == 0) {
-            BookEntity book = bookRepository.findById(id)
-                    .orElseThrow(() -> new BookNotFoundException("Book not found"));
-        }
+        book.softDelete();
+        bookRepository.save(book);
     }
 
     @Transactional
     @Override
-    public Optional<BookResponse> updateBook(BookRequest bookRequest, Long id) {
-        BookEntity bookEntity = bookRepository.getReferenceById(id);
+    public Optional<BookResponse> updateBook(BookRequest br, Long id) {
+        BookEntity book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
-        bookEntity.setTitle(bookRequest.title());
-        bookEntity.setAuthor(bookRequest.author());
-        bookEntity.setYearPublication(bookRequest.yearPublication());
-        bookEntity.setAmount(bookRequest.amount());
-        bookEntity.setIsbn(bookRequest.isbn());
-        bookEntity.setCategory(bookRequest.category());
+        book.updateBook(br.title(), br.author(), br.yearPublication(),
+                br.amount(), br.isbn(), br.category());
 
-        return Optional.of(bookEntity)
+        return Optional.of(bookRepository.save(book))
                 .map(bookMapper::entityToResponse);
     }
 
     @Transactional
     @Override
     public void returnBook(Long id) {
-        Integer rowsAffect = bookRepository.returnBook(id);
+        BookEntity book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
-        if (rowsAffect == 0) {
-            BookEntity book = bookRepository.findById(id)
-                    .orElseThrow(() -> new BookNotFoundException("Book not found"));
-
-            if (Objects.equals(book.getAmountAvailable(), book.getAmount())) {
-                throw new IllegalArgumentException("You can't return that book");
-            }
-        }
+        book.returnBook();
+        bookRepository.save(book);
     }
 
     @Transactional
     @Override
     public void loanBook(Long id) {
-        Integer rowsAffect = bookRepository.loanBook(id);
+        BookEntity book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
-        if (rowsAffect == 0) {
-            BookEntity book = bookRepository.findById(id)
-                    .orElseThrow(() -> new BookNotFoundException("Book not found"));
-
-            if (book.getAmountAvailable() == 0) {
-                throw new IllegalArgumentException("book out of print");
-            }
-        }
+        book.loanBook();
+        bookRepository.save(book);
     }
 }

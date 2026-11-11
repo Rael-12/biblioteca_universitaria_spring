@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Controller
 @RestController
-@RequestMapping("/books")
+@RequestMapping("api/${api.version}/books")
 public class BookController {
     private final IBookService bookService;
 
@@ -44,65 +44,62 @@ public class BookController {
     }
 
     @GetMapping()
-    public List<BookResponse> findAll(){
+    public List<BookResponse> findAll() {
         return bookService.findAll();
     }
 
     @GetMapping("/year/{id}")
-    public List<BookResponse> findByYear(@PathVariable Integer id){
+    public List<BookResponse> findByYear(@PathVariable Integer id) {
         return bookService.findByYear(id);
     }
 
     @GetMapping("/author/{author}")
-    public List<BookResponse> findByAuthor(@PathVariable String author){
+    public List<BookResponse> findByAuthor(@PathVariable String author) {
         return bookService.findByAuthor(author);
     }
 
     @GetMapping("/genre/{genre}")
-    public List<BookResponse> findByGenre(@PathVariable String genre){
+    public List<BookResponse> findByGenre(@PathVariable String genre) {
         return bookService.findByGenre(genre);
     }
 
     @PutMapping("/loan/{id}")
-    public ResponseEntity<Void> loanBook(@PathVariable Long id){
+    public ResponseEntity<Void> loanBook(@PathVariable Long id) {
         bookService.loanBook(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/return/{id}")
-    public ResponseEntity<Void> returnBook(@PathVariable Long id){
+    public ResponseEntity<Void> returnBook(@PathVariable Long id) {
         bookService.returnBook(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/softDelete/{id}")
-    public ResponseEntity<Void> softDelete(@PathVariable Long id){
+    public ResponseEntity<Void> softDelete(@PathVariable Long id) {
         bookService.sotfDelete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id){
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    //todo aqui van los valores de los objetos con requestBody
 
     @PostMapping()
     public ResponseEntity<BookResponse> createBook(@Valid @RequestBody
-                                                       BookRequest bookRequest){
-        Optional<BookResponse> book = bookService.createBook(bookRequest);
+                                                   BookRequest bookRequest) {
+        BookResponse book = bookService.createBook(bookRequest);
 
-        return book.map(bookResponse -> ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(bookResponse)).orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+        return ResponseEntity.ok(book);
 
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<BookResponse> updateBook(@Valid @RequestBody
-                                                       BookRequest bookRequest, @PathVariable Long id){
+                                                   BookRequest bookRequest, @PathVariable Long id) {
         Optional<BookResponse> updated = bookService.updateBook(bookRequest, id);
 
         return updated.map(ResponseEntity::ok)

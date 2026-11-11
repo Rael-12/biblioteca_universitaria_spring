@@ -64,4 +64,25 @@ public class UserEntity {
     protected void onUpdate() {
         this.updated_at = LocalDateTime.now();
     }
+
+    public void softDelete(){
+        this.active = false;
+    }
+
+    public void updateUser(String firstName, String lastName,
+            String email,  String phoneNumber, LocalDate birthdate){
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.birthdate = birthdate;
+    }
+
+    public void returnBook(){
+        if(this.loanBooks == 0)
+            throw new IllegalArgumentException("You can't return more books");
+        this.loanBooks--;
+    }
+
 }

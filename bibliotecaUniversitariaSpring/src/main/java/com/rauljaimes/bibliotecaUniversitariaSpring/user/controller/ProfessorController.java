@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/professors")
+@RequestMapping("api/${api.version}/professors")
 public class ProfessorController {
     private final IProfessorService profService;
 
@@ -21,7 +21,7 @@ public class ProfessorController {
 
     @PostMapping()
     public ResponseEntity<ProfessorResponse> createProfessor(@Valid @RequestBody ProfessorRequest professorRequest){
-        return ResponseEntity.of(profService.createProfessor(professorRequest));
+        return ResponseEntity.ok(profService.createProfessor(professorRequest));
     }
 
     @GetMapping()
@@ -44,11 +44,4 @@ public class ProfessorController {
         profService.loanBook(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-    @PutMapping("/returBook/{id}")
-    public ResponseEntity<Void> returnBook(@PathVariable Long id){
-        profService.returnBook(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
 }

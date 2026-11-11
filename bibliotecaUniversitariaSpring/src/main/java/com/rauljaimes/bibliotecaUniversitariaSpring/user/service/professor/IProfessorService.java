@@ -10,7 +10,7 @@ import java.util.Optional;
 @Service
 public interface IProfessorService {
 
-    Optional<ProfessorResponse> createProfessor(ProfessorRequest professorRequest);
+    ProfessorResponse createProfessor(ProfessorRequest pr);
 
     List<ProfessorResponse> findAll();
 
