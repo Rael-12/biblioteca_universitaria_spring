@@ -6,41 +6,35 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.StudentEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.StudentRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class StudentService implements IStudentService{
+public class StudentService implements IStudentService {
     private final StudentRepository studentRepository;
     private final IUserMapper userMapper;
+    private final StudentEntity studentEntity;
 
-    public StudentService(StudentRepository studentRepository, IUserMapper userMapper) {
+    public StudentService(StudentRepository studentRepository, IUserMapper userMapper, StudentEntity studentEntity) {
         this.studentRepository = studentRepository;
         this.userMapper = userMapper;
+        this.studentEntity = studentEntity;
     }
 
     @Transactional
     @Override
-    public Optional<StudentResponse> createStudent(StudentRequest studentRequest) {
-        StudentEntity student = StudentEntity.builder()
-                .firstName(studentRequest.firstName())
-                .lastName(studentRequest.lastName())
-                .email(studentRequest.email())
-                .phoneNumber(String.valueOf(studentRequest.phoneNumber()))
-                .birthdate(studentRequest.birthdate())
-                .active(true)
-                .loanBooks(0)
-                .semester(studentRequest.semester())
-                .degree(studentRequest.degree())
-                .build();
+    public StudentResponse createStudent(StudentRequest sr) {
+        StudentEntity student = studentEntity.createStudent(
+                sr.firstName(), sr.lastName(), sr.email(),
+                String.valueOf(sr.phoneNumber()), sr.birthdate(), sr.semester(), sr.degree());
 
-        return Optional.of(studentRepository.save(student))
-                .map(userMapper::studentEntityToResponse);
+        return userMapper.studentEntityToResponse(student);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<StudentResponse> findAll() {
         return studentRepository.findAll().stream()
@@ -48,6 +42,7 @@ public class StudentService implements IStudentService{
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<StudentResponse> findBySemester(String semester) {
         return studentRepository.findBySemester(semester).stream()
@@ -55,6 +50,7 @@ public class StudentService implements IStudentService{
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<StudentResponse> findByDegree(String degree) {
         return studentRepository.findByDegree(degree).stream()
@@ -62,6 +58,7 @@ public class StudentService implements IStudentService{
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<StudentResponse> findBySemesterAndDegree(String semester, String degree) {
         return studentRepository.findBySemesterAndDegree(semester, degree).stream()
@@ -69,6 +66,7 @@ public class StudentService implements IStudentService{
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<StudentResponse> findById(Long id) {
         return studentRepository.findById(id)
@@ -78,14 +76,9 @@ public class StudentService implements IStudentService{
     @Transactional
     @Override
     public void loanBook(Long id) {
-        Integer rowsAffect = studentRepository.loanBook(id);
-
-        if(rowsAffect == 0){
-            StudentEntity student = studentRepository.findById(id)
-                    .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-            if(student.getLoanBooks() == 5)
-                throw new IllegalArgumentException("No more books can be lent to the user");
-        }
+        StudentEntity student = studentRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        student.loanBook();
+        studentRepository.save(student);
     }
 }

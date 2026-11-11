@@ -7,6 +7,7 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFound
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.ProfessorRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,7 @@ public class ProfessorService implements IProfessorService {
         this.professorEntity = professorEntity;
     }
 
+    @Transactional
     @Override
     public ProfessorResponse createProfessor(ProfessorRequest pr) {
         ProfessorEntity professor = professorEntity.createProfessor(pr.firstName(), pr.lastName(), pr.email(),
@@ -31,6 +33,7 @@ public class ProfessorService implements IProfessorService {
         return userMapper.professorEntityToResponse(profeRepository.save(professor));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ProfessorResponse> findAll() {
         return profeRepository.findAll().stream()
@@ -38,12 +41,14 @@ public class ProfessorService implements IProfessorService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<ProfessorResponse> findById(Long id) {
         return profeRepository.findById(id)
                 .map(userMapper::professorEntityToResponse);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ProfessorResponse> findByDepartment(String department) {
         return profeRepository.findByDepartment(department).stream()
@@ -51,6 +56,7 @@ public class ProfessorService implements IProfessorService {
                 .toList();
     }
 
+    @Transactional
     @Override
     public void loanBook(Long id) {
         ProfessorEntity profe = profeRepository.findById(id)

@@ -16,24 +16,4 @@ public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
     List<StudentEntity> findByDegree(String degree);
 
     Optional<StudentEntity> findBySemesterAndDegree(String semester, String degree);
-
-    @Transactional
-    @Modifying
-    @Query(value = """
-            UPDATE users
-            SET loan_books = loan_books + 1
-            WHERE id = ?
-                        AND loan_books < 5
-            """, nativeQuery = true)
-    Integer loanBook(Long id);
-
-    @Transactional
-    @Modifying
-    @Query(value = """
-            UPDATE users
-            SET loan_books = loan_books - 1
-            WHERE id = ?
-                        AND loan_books > 0
-            """, nativeQuery = true)
-    Integer returnBook(Long id);
 }

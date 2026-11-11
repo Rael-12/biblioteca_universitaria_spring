@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/professors")
+@RequestMapping("api/${api.version}/professors")
 public class ProfessorController {
     private final IProfessorService profService;
 
