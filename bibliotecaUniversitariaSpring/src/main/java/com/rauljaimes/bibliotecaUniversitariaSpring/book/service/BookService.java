@@ -16,18 +16,16 @@ import java.util.Optional;
 public class BookService implements IBookService {
     private final IBookRepository bookRepository;
     private final BookMapper bookMapper;
-    private final BookEntity bookEntity;
 
-    public BookService(IBookRepository bookRepository, BookMapper bookMapper, BookEntity bookEntity) {
+    public BookService(IBookRepository bookRepository, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
-        this.bookEntity = bookEntity;
     }
 
     @Transactional
     @Override
     public BookResponse createBook(BookRequest br) {
-        BookEntity book = bookEntity.createBook(br.title(), br.author(), br.yearPublication(),
+        BookEntity book = BookEntity.createBook(br.title(), br.author(), br.yearPublication(),
                 br.amount(), br.isbn(), br.category());
 
         return bookMapper.entityToResponse(bookRepository.save(book));

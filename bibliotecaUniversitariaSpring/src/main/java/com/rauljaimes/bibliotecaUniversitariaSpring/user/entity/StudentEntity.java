@@ -21,7 +21,7 @@ public class StudentEntity extends UserEntity {
     @Column(nullable = false, length = 100)
     private String degree;
 
-    public StudentEntity createStudent(
+    public static StudentEntity createStudent(
             String firstName, String lastName, String email,
             String phoneNumber, LocalDate birthDate, String semester,
             String degree

@@ -52,7 +52,7 @@ public class BookEntity {
     private List<LoanEntity> loans = new ArrayList<>();
 
 
-    public BookEntity createBook(String title, String author,
+    public static BookEntity createBook(String title, String author,
                                  Integer yearPublication, Integer amount,
                                  String isbn, String category) {
 

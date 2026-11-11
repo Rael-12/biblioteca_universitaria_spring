@@ -18,7 +18,7 @@ public class ProfessorEntity extends UserEntity {
     @Column(nullable = false, length = 100)
     private String department;
 
-    public ProfessorEntity createProfessor(String firstName, String lastName, String email,
+    public static ProfessorEntity createProfessor(String firstName, String lastName, String email,
                                            String phoneNumber, LocalDate birthDate, String department) {
         return ProfessorEntity.builder()
                 .firstName(firstName)

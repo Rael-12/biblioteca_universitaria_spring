@@ -16,18 +16,16 @@ import java.util.Optional;
 public class ProfessorService implements IProfessorService {
     private final ProfessorRepository profeRepository;
     private final IUserMapper userMapper;
-    private final ProfessorEntity professorEntity;
 
-    public ProfessorService(ProfessorRepository profeRepository, IUserMapper userMapper, ProfessorEntity professorEntity) {
+    public ProfessorService(ProfessorRepository profeRepository, IUserMapper userMapper) {
         this.profeRepository = profeRepository;
         this.userMapper = userMapper;
-        this.professorEntity = professorEntity;
     }
 
     @Transactional
     @Override
     public ProfessorResponse createProfessor(ProfessorRequest pr) {
-        ProfessorEntity professor = professorEntity.createProfessor(pr.firstName(), pr.lastName(), pr.email(),
+        ProfessorEntity professor = ProfessorEntity.createProfessor(pr.firstName(), pr.lastName(), pr.email(),
                 String.valueOf(pr.phoneNumber()), pr.birthdate(), pr.department());
 
         return userMapper.professorEntityToResponse(profeRepository.save(professor));
