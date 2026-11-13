@@ -29,4 +29,6 @@ public interface IUserService {
     Optional<UserResponse> updateUser(UserRequest userRequest, Long id);
 
     void returnBook(Long id);
+
+    public void loanBook(Long id);
 }

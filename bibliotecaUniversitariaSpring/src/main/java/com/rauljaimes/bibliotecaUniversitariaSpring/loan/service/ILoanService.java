@@ -10,15 +10,11 @@ import java.util.Optional;
 @Service
 public interface ILoanService {
 
-    Optional<LoanResponse> createLoan(LoanRequest loanRequest);
+    LoanResponse createLoan(LoanRequest loanRequest);
 
-    Long softDelete(Long id);
+    void returnBook(Long id);
 
-    void returnBook(LoanRequest loanRequest);
-
-    String changeStatus(Long loanId, String status);
-
-    Optional<LoanResponse> renewBook(LoanRequest loanRequest);
+    LoanResponse renewBook(Long id);
 
     List<LoanResponse> findAll();
 

@@ -3,25 +3,18 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.loan.service;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.entity.BookEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.exceptions.BookNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.repository.IBookRepository;
-import com.rauljaimes.bibliotecaUniversitariaSpring.book.service.IBookService;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.dto.LoanRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.dto.LoanResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.entity.LoanEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.exceptions.LoanNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.mapper.ILoanMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.repository.ILoansRepository;
-import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.ProfessorEntity;
-import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.StudentEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.UserEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.UserRepository;
-import com.rauljaimes.bibliotecaUniversitariaSpring.user.service.professor.IProfessorService;
-import com.rauljaimes.bibliotecaUniversitariaSpring.user.service.student.IStudentService;
-import com.rauljaimes.bibliotecaUniversitariaSpring.user.service.user.IUserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,130 +25,57 @@ public class LoanService implements ILoanService {
     private final ILoanMapper loanMapper;
     private final UserRepository userRepository;
     private final IBookRepository bookRepository;
-    private final IBookService bookService;
-    private final IUserService userService;
-    private final IStudentService studentService;
-    private final IProfessorService profService;
 
-    public LoanService(ILoansRepository loansRepository, ILoanMapper loanMapper, UserRepository userRepository, IBookRepository bookRepository, IBookService bookService, IUserService userService, IStudentService studentService, IProfessorService profService) {
+    public LoanService(ILoansRepository loansRepository, ILoanMapper loanMapper,
+                       UserRepository userRepository, IBookRepository bookRepository) {
         this.loansRepository = loansRepository;
         this.loanMapper = loanMapper;
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
-        this.bookService = bookService;
-        this.userService = userService;
-        this.studentService = studentService;
-        this.profService = profService;
     }
 
     @Transactional
     @Override
-    public Optional<LoanResponse> createLoan(LoanRequest loanRequest) {
+    public LoanResponse createLoan(LoanRequest loanRequest) {
         BookEntity book = bookRepository.findById(loanRequest.bookId())
                 .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
         UserEntity user = userRepository.findById(loanRequest.userId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        LoanEntity loan = LoanEntity.builder()
-                .user(user)
-                .book(book)
-                .active(true)
-                .renewedCount(0L)
-                .status("PRESTADO")
-                .build();
+        if (!book.isActive())
+            throw new BookNotFoundException("Book not available");
 
-        switch (user) {
-            case StudentEntity student -> {
-                studentService.loanBook(student.getId());
-                loan.setDueDate(LocalDate.now().plusDays(15));
-            }
+        if (!user.isActive())
+            throw new UserNotFoundException("User not available");
 
-            case ProfessorEntity profe -> {
-                profService.loanBook(profe.getId());
-                loan.setDueDate(LocalDate.now().plusDays(30));
-            }
+        LoanEntity loan = LoanEntity.createLoan(user, book);
 
-            default -> throw new UserNotFoundException("User not found");
-        }
+        book.loanBook();
+        user.loanBook();
 
-        bookService.loanBook(book.getId());
-
-        return Optional.of(loansRepository.save(loan))
-                .map(loanMapper::loanEntityToResponse);
+        return loanMapper.loanEntityToResponse(loansRepository.save(loan));
     }
+
 
     @Transactional
     @Override
-    public Long softDelete(Long id) {
-        if (id == null)
-            throw new IllegalArgumentException("Id must not be null");
-
-        if (!loansRepository.existsById(id))
-            throw new LoanNotFoundException("Loan not found");
-
-        Long rowsAffect = loansRepository.softDelete(id);
-
-        if (rowsAffect == 0)
-            throw new IllegalArgumentException("The deletion could not be performed");
-
-        return rowsAffect;
-    }
-
-    @Transactional
-    @Override
-    public void returnBook(LoanRequest loanRequest) {
-        BookEntity book = bookRepository.findById(loanRequest.bookId())
-                .orElseThrow(() -> new BookNotFoundException("Book not found"));
-
-        UserEntity user = userRepository.findById(loanRequest.userId())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-        LoanEntity loan = loansRepository.findByUserAndBook(user, book)
+    public void returnBook(Long id) {
+        LoanEntity loan = loansRepository.findByUserAndBook(id)
                 .orElseThrow(() -> new LoanNotFoundException("Loan not found"));
 
-        bookService.returnBook(book.getId());
-        userService.returnBook(user.getId());
-
-        loan.setReturnDate(LocalDate.now());
-        loan.setStatus("DEVUELTO");
-
+        loan.returnBook();
         loansRepository.save(loan);
     }
 
     @Transactional
     @Override
-    public String changeStatus(Long loanId, String status) {
-        Long rowsAffect = loansRepository.changeStaus(status, loanId);
-
-        if (rowsAffect == 0 && !loansRepository.existsById(loanId))
-            throw new LoanNotFoundException("Loan not found");
-
-        return status;
-    }
-
-    @Transactional
-    @Override
-    public Optional<LoanResponse> renewBook(LoanRequest loanRequest) {
-        BookEntity book = bookRepository.findById(loanRequest.bookId())
-                .orElseThrow(() -> new BookNotFoundException("Book not found"));
-
-        UserEntity user = userRepository.findById(loanRequest.userId())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-        LoanEntity loan = loansRepository.findByUserAndBook(user, book)
+    public LoanResponse renewBook(Long id) {
+        LoanEntity loan = loansRepository.findByUserAndBook(id)
                 .orElseThrow(() -> new LoanNotFoundException("Loan not found"));
 
-        switch (user) {
-            case StudentEntity student -> loan.setDueDate(LocalDate.now().plusDays(15));
-
-            case ProfessorEntity profe -> loan.setDueDate(LocalDate.now().plusDays(30));
-
-            default -> throw new UserNotFoundException("User not found");
-        }
-
-        return Optional.of(loansRepository.save(loan))
-                .map(loanMapper::loanEntityToResponse);
+        loan.renewLoan();
+        return loanMapper.loanEntityToResponse(loansRepository.save(loan));
     }
 
     @Transactional(readOnly = true)

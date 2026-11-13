@@ -38,31 +38,20 @@ public class LoanController {
         return loanService.findByBook(bookId);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> softDelete(@PathVariable Long id){
-        loanService.softDelete(id);
-        return ResponseEntity.noContent().build();
+    @PatchMapping("/renew/{id}")
+    public ResponseEntity<LoanResponse> renewBook(@PathVariable Long id){
+        return ResponseEntity.ok(loanService.renewBook(id));
     }
 
-    @PatchMapping("/renew/")
-    public ResponseEntity<LoanResponse> renewBook(@Valid @RequestBody LoanRequest loanRequest){
-        return ResponseEntity.of(loanService.renewBook(loanRequest));
-    }
-
-    @PatchMapping("/status/{id}/{status}")
-    public String changeStatus(@PathVariable Long id ,@PathVariable String status){
-        return loanService.changeStatus(id, status);
-    }
-
-    @PatchMapping("/return/")
-    public ResponseEntity<Void> returnBook(@Valid @RequestBody LoanRequest loanRequest){
-        loanService.returnBook(loanRequest);
+    @PatchMapping("/return/{id}")
+    public ResponseEntity<Void> returnBook(@PathVariable Long id){
+        loanService.returnBook(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping()
     public ResponseEntity<LoanResponse> createLoan(@Valid @RequestBody LoanRequest loanRequest){
-        return ResponseEntity.of(loanService.createLoan(loanRequest));
+        return ResponseEntity.ok(loanService.createLoan(loanRequest));
     }
 
 }

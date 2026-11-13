@@ -39,9 +39,15 @@ public class StudentEntity extends UserEntity {
                 .build();
     }
 
+    @Override
     public void loanBook(){
         if(this.getLoanBooks() > 5)
             throw new IllegalArgumentException("You can't loan more books");
         this.setLoanBooks(this.getLoanBooks() + 1);
+    }
+
+    @Override
+    public Long getLoanDuration() {
+        return 15L;
     }
 }

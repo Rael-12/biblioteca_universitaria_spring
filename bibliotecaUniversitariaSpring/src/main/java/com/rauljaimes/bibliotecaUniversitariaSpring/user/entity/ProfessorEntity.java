@@ -31,9 +31,15 @@ public class ProfessorEntity extends UserEntity {
                 .build();
     }
 
+    @Override
     public void loanBook(){
         if(this.getLoanBooks() > 10)
             throw new IllegalArgumentException("You can't loan less than 10 loan books");
         this.setLoanBooks(this.getLoanBooks() + 1);
+    }
+
+    @Override
+    public Long getLoanDuration() {
+        return 30L;
     }
 }
