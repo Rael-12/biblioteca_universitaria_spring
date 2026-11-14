@@ -1,7 +1,10 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.loan.entity;
 
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.entity.BookEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.book.exceptions.BookNotFoundException;
+import com.rauljaimes.bibliotecaUniversitariaSpring.loan.enums.LoanStates;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.UserEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFoundException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,15 +25,12 @@ public class LoanEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", nullable = false )
+    @JoinColumn(name = "id", nullable = false)
     private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", nullable = false )
+    @JoinColumn(name = "book_id", nullable = false)
     private BookEntity book;
-
-    @Column(name = "active", nullable = false)
-    private Boolean active;
 
     @Column(name = "date_loan", nullable = false)
     private LocalDate dateLoan;
@@ -42,7 +42,8 @@ public class LoanEntity {
     private LocalDate returnDate;
 
     @Column(name = "status", nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private LoanStates status;
 
     @Column(name = "renewed_count", nullable = false)
     private Long renewedCount;
@@ -50,5 +51,42 @@ public class LoanEntity {
     @PrePersist
     protected void onCreate() {
         this.dateLoan = LocalDate.now();
+    }
+
+    public static LoanEntity createLoan(UserEntity user, BookEntity book) {
+        if(user == null)
+            throw new UserNotFoundException("User must not be null");
+        if(book == null)
+            throw new BookNotFoundException("Book must not be null");
+
+        return LoanEntity.builder()
+                .user(user)
+                .book(book)
+                .renewedCount(0L)
+                .status(LoanStates.ACTIVE)
+                .dueDate(LocalDate.now().plusDays(user.getLoanDuration()))
+                .build();
+    }
+
+    public void renewLoan(){
+        if(this.status == LoanStates.RETURNED || this.status == LoanStates.RETURNED_LATE)
+            throw new IllegalArgumentException("You cant renew this loan");
+
+        if(this.renewedCount > 3)
+            throw new IllegalArgumentException("Ypu cant renew this loan more times");
+
+        this.renewedCount++;
+        this.dueDate = this.dueDate.plusDays(user.getLoanDuration());
+    }
+
+    public void returnBook(){
+        if(this.status == LoanStates.RETURNED || this.status == LoanStates.RETURNED_LATE)
+            throw new IllegalArgumentException("You cant return this loan");
+
+        if(LocalDate.now().isAfter(this.dueDate))
+            this.status = LoanStates.RETURNED_LATE;
+        else
+            this.status = LoanStates.RETURNED;
+        this.returnDate = LocalDate.now();
     }
 }

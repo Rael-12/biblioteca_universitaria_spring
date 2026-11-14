@@ -16,18 +16,16 @@ import java.util.Optional;
 public class StudentService implements IStudentService {
     private final StudentRepository studentRepository;
     private final IUserMapper userMapper;
-    private final StudentEntity studentEntity;
 
-    public StudentService(StudentRepository studentRepository, IUserMapper userMapper, StudentEntity studentEntity) {
+    public StudentService(StudentRepository studentRepository, IUserMapper userMapper) {
         this.studentRepository = studentRepository;
         this.userMapper = userMapper;
-        this.studentEntity = studentEntity;
     }
 
     @Transactional
     @Override
     public StudentResponse createStudent(StudentRequest sr) {
-        StudentEntity student = studentEntity.createStudent(
+        StudentEntity student = StudentEntity.createStudent(
                 sr.firstName(), sr.lastName(), sr.email(),
                 String.valueOf(sr.phoneNumber()), sr.birthdate(), sr.semester(), sr.degree());
 

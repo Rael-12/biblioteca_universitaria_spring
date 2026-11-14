@@ -103,4 +103,14 @@ public class UserService implements IUserService {
         user.returnBook();
         userRepository.save(user);
     }
+
+    @Transactional
+    @Override
+    public void loanBook(Long id){
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        user.loanBook();
+        userRepository.save(user);
+    }
 }

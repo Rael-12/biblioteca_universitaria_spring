@@ -6,7 +6,6 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.user.UserResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.ProfessorEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.StudentEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.UserEntity;
-import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.UserRepository;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

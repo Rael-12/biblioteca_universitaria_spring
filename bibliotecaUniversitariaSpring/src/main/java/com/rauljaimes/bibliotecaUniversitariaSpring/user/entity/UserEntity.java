@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class UserEntity {
+public abstract class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -85,4 +85,7 @@ public class UserEntity {
         this.loanBooks--;
     }
 
+    public abstract Long getLoanDuration();
+
+    public abstract void loanBook();
 }

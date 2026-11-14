@@ -1,11 +1,6 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.user;
 
-import lombok.Data;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-
 public record UserRequest(
         String firstName,
         String lastName,

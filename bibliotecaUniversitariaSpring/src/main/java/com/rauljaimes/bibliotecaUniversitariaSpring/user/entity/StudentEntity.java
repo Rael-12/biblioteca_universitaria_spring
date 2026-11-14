@@ -21,7 +21,7 @@ public class StudentEntity extends UserEntity {
     @Column(nullable = false, length = 100)
     private String degree;
 
-    public StudentEntity createStudent(
+    public static StudentEntity createStudent(
             String firstName, String lastName, String email,
             String phoneNumber, LocalDate birthDate, String semester,
             String degree
@@ -39,9 +39,15 @@ public class StudentEntity extends UserEntity {
                 .build();
     }
 
+    @Override
     public void loanBook(){
         if(this.getLoanBooks() > 5)
             throw new IllegalArgumentException("You can't loan more books");
         this.setLoanBooks(this.getLoanBooks() + 1);
+    }
+
+    @Override
+    public Long getLoanDuration() {
+        return 15L;
     }
 }
