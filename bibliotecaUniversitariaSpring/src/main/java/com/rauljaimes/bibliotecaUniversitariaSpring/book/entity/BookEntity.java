@@ -1,5 +1,6 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.book.entity;
 
+import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.entity.BookCategoryEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.entity.LoanEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,9 +42,9 @@ public class BookEntity {
     @Column(name = "isbn", nullable = false, unique = true)
     private String isbn;
 
-    @Column(name = "category", nullable = false)
-    //@Enumerated
-    private String category;
+    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private BookCategoryEntity category;
 
     @Column(name = "active", nullable = false)
     private boolean active;
@@ -54,7 +55,7 @@ public class BookEntity {
 
     public static BookEntity createBook(String title, String author,
                                  Integer yearPublication, Integer amount,
-                                 String isbn, String category) {
+                                 String isbn, BookCategoryEntity category) {
 
         return BookEntity.builder()
                 .title(title)
@@ -86,7 +87,7 @@ public class BookEntity {
 
     public void updateBook(String title, String author,
                            Integer yearPublication, Integer amount,
-                           String isbn, String category) {
+                           String isbn, BookCategoryEntity category) {
         this.title = title;
         this.author = author;
         this.yearPublication = yearPublication;

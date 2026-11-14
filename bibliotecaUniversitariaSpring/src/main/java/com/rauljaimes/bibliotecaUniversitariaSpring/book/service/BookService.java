@@ -6,6 +6,9 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.book.entity.BookEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.exceptions.BookNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.mapper.BookMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.repository.IBookRepository;
+import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.entity.BookCategoryEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.exceptions.BookCategoryNotFoundException;
+import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.repository.BookCategoryRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,17 +19,22 @@ import java.util.Optional;
 public class BookService implements IBookService {
     private final IBookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final BookCategoryRepo bookCategoryRepo;
 
-    public BookService(IBookRepository bookRepository, BookMapper bookMapper) {
+    public BookService(IBookRepository bookRepository, BookMapper bookMapper, BookCategoryRepo bookCategoryRepo) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
+        this.bookCategoryRepo = bookCategoryRepo;
     }
 
     @Transactional
     @Override
     public BookResponse createBook(BookRequest br) {
+        BookCategoryEntity category = bookCategoryRepo.findById(br.categoryId())
+                .orElseThrow(() -> new BookCategoryNotFoundException("Category not found"));
+
         BookEntity book = BookEntity.createBook(br.title(), br.author(), br.yearPublication(),
-                br.amount(), br.isbn(), br.category());
+                br.amount(), br.isbn(), category);
 
         return bookMapper.entityToResponse(bookRepository.save(book));
     }
@@ -102,11 +110,14 @@ public class BookService implements IBookService {
     @Transactional
     @Override
     public Optional<BookResponse> updateBook(BookRequest br, Long id) {
+        BookCategoryEntity category = bookCategoryRepo.findById(br.categoryId())
+                .orElseThrow(() -> new BookCategoryNotFoundException("Category not found"));
+
         BookEntity book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
         book.updateBook(br.title(), br.author(), br.yearPublication(),
-                br.amount(), br.isbn(), br.category());
+                br.amount(), br.isbn(), category);
 
         return Optional.of(bookRepository.save(book))
                 .map(bookMapper::entityToResponse);

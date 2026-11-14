@@ -1,5 +1,7 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.book.dto;
 
+import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.dto.BookCategoryResponse;
+
 public record BookResponse(
         Long id,
         String title,
@@ -9,7 +11,7 @@ public record BookResponse(
         Integer amount,
         Integer amountAvailable,
         String isbn,
-        String category,
+        BookCategoryResponse category,
         Boolean active
 ) {
 }

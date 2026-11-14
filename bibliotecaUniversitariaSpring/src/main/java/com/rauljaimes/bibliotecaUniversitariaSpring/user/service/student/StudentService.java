@@ -3,6 +3,7 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.user.service.student;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.student.StudentRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.student.StudentResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.StudentEntity;
+import com.rauljaimes.bibliotecaUniversitariaSpring.user.enums.Semester;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.StudentRepository;
@@ -27,7 +28,7 @@ public class StudentService implements IStudentService {
     public StudentResponse createStudent(StudentRequest sr) {
         StudentEntity student = StudentEntity.createStudent(
                 sr.firstName(), sr.lastName(), sr.email(),
-                String.valueOf(sr.phoneNumber()), sr.birthdate(), sr.semester(), sr.degree());
+                String.valueOf(sr.phoneNumber()), sr.birthdate(), Semester.valueOf(sr.semester()), sr.degree());
 
         return userMapper.studentEntityToResponse(student);
     }

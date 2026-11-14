@@ -1,7 +1,7 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.dto;
 
 public record BookCategoryResponse(
-        Long id,
+        Long categoryId,
         String categoryName,
         boolean active
 ) {
