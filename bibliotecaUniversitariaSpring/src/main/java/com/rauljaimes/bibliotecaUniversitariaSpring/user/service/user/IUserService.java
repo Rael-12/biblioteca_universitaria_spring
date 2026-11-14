@@ -30,5 +30,5 @@ public interface IUserService {
 
     void returnBook(Long id);
 
-    public void loanBook(Long id);
+    void loanBook(Long id);
 }

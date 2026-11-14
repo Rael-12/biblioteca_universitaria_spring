@@ -61,7 +61,7 @@ public class LoanService implements ILoanService {
     @Transactional
     @Override
     public void returnBook(Long id) {
-        LoanEntity loan = loansRepository.findByUserAndBook(id)
+        LoanEntity loan = loansRepository.findById(id)
                 .orElseThrow(() -> new LoanNotFoundException("Loan not found"));
 
         loan.returnBook();
@@ -71,7 +71,7 @@ public class LoanService implements ILoanService {
     @Transactional
     @Override
     public LoanResponse renewBook(Long id) {
-        LoanEntity loan = loansRepository.findByUserAndBook(id)
+        LoanEntity loan = loansRepository.findById(id)
                 .orElseThrow(() -> new LoanNotFoundException("Loan not found"));
 
         loan.renewLoan();

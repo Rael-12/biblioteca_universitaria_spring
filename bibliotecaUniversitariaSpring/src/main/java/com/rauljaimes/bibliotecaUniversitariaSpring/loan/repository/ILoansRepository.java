@@ -15,6 +15,4 @@ public interface ILoansRepository extends JpaRepository<LoanEntity, Long> {
     List<LoanEntity> findByUser(UserEntity user);
 
     List<LoanEntity> findByBook(BookEntity book);
-
-    Optional<LoanEntity> findByUserAndBook(Long id);
 }

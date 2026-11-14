@@ -1,10 +1,7 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.user.repository;
 
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.StudentEntity;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;

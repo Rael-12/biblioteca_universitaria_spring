@@ -2,12 +2,10 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.loan.service;
 
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.dto.LoanRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.dto.LoanResponse;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
 public interface ILoanService {
 
     LoanResponse createLoan(LoanRequest loanRequest);

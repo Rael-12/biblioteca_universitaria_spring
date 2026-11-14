@@ -8,6 +8,4 @@ import org.mapstruct.Mapper;
 public interface BookMapper {
 
     BookResponse entityToResponse(BookEntity  bookEntity);
-
-    BookEntity responseToEntity(BookResponse bookResponse);
 }
