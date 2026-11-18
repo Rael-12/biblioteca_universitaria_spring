@@ -12,10 +12,13 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.loan.repository.ILoansReposi
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.UserEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.UserRepository;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageMapper;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,13 +28,15 @@ public class LoanService implements ILoanService {
     private final ILoanMapper loanMapper;
     private final UserRepository userRepository;
     private final IBookRepository bookRepository;
+    private final PageMapper pageMapper;
 
     public LoanService(ILoansRepository loansRepository, ILoanMapper loanMapper,
-                       UserRepository userRepository, IBookRepository bookRepository) {
+                       UserRepository userRepository, IBookRepository bookRepository, PageMapper pageMapper) {
         this.loansRepository = loansRepository;
         this.loanMapper = loanMapper;
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
+        this.pageMapper = pageMapper;
     }
 
     @Transactional
@@ -80,32 +85,35 @@ public class LoanService implements ILoanService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<LoanResponse> findAll() {
-        return loansRepository.findAll().stream()
-                .map(loanMapper::loanEntityToResponse)
-                .toList();
+    public PageResponse<LoanResponse> findAll(Pageable pageable) {
+        Page<LoanResponse> loans = loansRepository.findAll(pageable)
+                .map(loanMapper::loanEntityToResponse);
+
+        return pageMapper.toPageResponse(loans);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<LoanResponse> findByBook(Long id) {
+    public PageResponse<LoanResponse> findByBook(Long id, Pageable pageable) {
         BookEntity book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
-        return loansRepository.findByBook(book).stream()
-                .map(loanMapper::loanEntityToResponse)
-                .toList();
+        Page<LoanResponse> loans = loansRepository.findByBook(book, pageable)
+                .map(loanMapper::loanEntityToResponse);
+
+        return pageMapper.toPageResponse(loans);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<LoanResponse> findByUser(Long id) {
+    public PageResponse<LoanResponse> findByUser(Long id, Pageable pageable) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        return loansRepository.findByUser(user).stream()
-                .map(loanMapper::loanEntityToResponse)
-                .toList();
+        Page<LoanResponse> loans = loansRepository.findByUser(user, pageable)
+                .map(loanMapper::loanEntityToResponse);
+
+        return pageMapper.toPageResponse(loans);
     }
 
     @Transactional(readOnly = true)

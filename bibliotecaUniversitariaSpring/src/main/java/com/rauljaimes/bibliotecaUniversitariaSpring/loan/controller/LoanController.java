@@ -3,11 +3,13 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.loan.controller;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.dto.LoanRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.dto.LoanResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.service.ILoanService;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/${api.version}/loans")
@@ -19,8 +21,9 @@ public class LoanController {
     }
 
     @GetMapping()
-    public List<LoanResponse> findAll(){
-        return loanService.findAll();
+    public ResponseEntity<PageResponse<LoanResponse>> findAll(@PageableDefault(size = 20, sort = "dateLoan",
+            direction = Sort.Direction.DESC) Pageable pageable){
+        return ResponseEntity.ok(loanService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
@@ -29,13 +32,17 @@ public class LoanController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<LoanResponse>  findByUser(@PathVariable Long userId){
-        return loanService.findByUser(userId);
+    public ResponseEntity<PageResponse<LoanResponse>>  findByUser(@PathVariable Long userId,
+                                                                  @PageableDefault(size = 20, sort = "dateLoan",
+                                                                          direction = Sort.Direction.DESC) Pageable pageable){
+        return ResponseEntity.ok(loanService.findByUser(userId, pageable));
     }
 
     @GetMapping("/book/{bookId}")
-    public List<LoanResponse> findByBook(@PathVariable Long bookId){
-        return loanService.findByBook(bookId);
+    public ResponseEntity<PageResponse<LoanResponse>> findByBook(@PathVariable Long bookId,
+                                                                 @PageableDefault(size = 20, sort = "dateLoan",
+                                                                         direction = Sort.Direction.DESC) Pageable pageable){
+        return ResponseEntity.ok(loanService.findByBook(bookId, pageable));
     }
 
     @PatchMapping("/renew/{id}")

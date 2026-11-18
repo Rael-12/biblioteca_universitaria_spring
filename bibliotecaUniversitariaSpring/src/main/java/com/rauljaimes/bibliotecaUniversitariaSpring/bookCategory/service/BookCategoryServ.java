@@ -6,27 +6,32 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.entity.BookCate
 import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.exceptions.BookCategoryNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.mapper.BookCategoryMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.repository.BookCategoryRepo;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageMapper;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class BookCategoryServ implements IBookCategoryServ {
     private final BookCategoryRepo bookCategoryRepo;
     private final BookCategoryMapper bookCategoryMapper;
+    private final PageMapper pageMapper;
 
-    public BookCategoryServ(BookCategoryRepo bookCategoryRepo, BookCategoryMapper bookCategoryMapper) {
+    public BookCategoryServ(BookCategoryRepo bookCategoryRepo, BookCategoryMapper bookCategoryMapper, PageMapper pageMapper) {
         this.bookCategoryRepo = bookCategoryRepo;
         this.bookCategoryMapper = bookCategoryMapper;
+        this.pageMapper = pageMapper;
     }
 
     @Override
-    public List<BookCategoryResponse> findAll() {
-        return bookCategoryRepo.findAll().stream()
-                .filter(BookCategoryEntity::isActive)
-                .map(bookCategoryMapper::categoryEntityToResponse)
-                .toList();
+    public PageResponse<BookCategoryResponse> findAll(Pageable pageable) {
+        Page<BookCategoryResponse> categories = bookCategoryRepo.findAll(pageable)
+                .map(bookCategoryMapper::categoryEntityToResponse);
+
+        return pageMapper.toPageResponse(categories);
     }
 
     @Override

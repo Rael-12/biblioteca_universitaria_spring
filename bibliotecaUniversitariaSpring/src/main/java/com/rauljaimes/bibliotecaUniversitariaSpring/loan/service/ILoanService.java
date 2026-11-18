@@ -2,8 +2,9 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.loan.service;
 
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.dto.LoanRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.loan.dto.LoanResponse;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageResponse;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ILoanService {
@@ -14,11 +15,11 @@ public interface ILoanService {
 
     LoanResponse renewBook(Long id);
 
-    List<LoanResponse> findAll();
+    PageResponse<LoanResponse> findAll(Pageable pageable);
 
-    List<LoanResponse> findByBook(Long id);
+    PageResponse<LoanResponse> findByBook(Long id, Pageable pageable);
 
-    List<LoanResponse> findByUser(Long id);
+    PageResponse<LoanResponse> findByUser(Long id, Pageable pageable);
 
     Optional<LoanResponse> findById(Long id);
 

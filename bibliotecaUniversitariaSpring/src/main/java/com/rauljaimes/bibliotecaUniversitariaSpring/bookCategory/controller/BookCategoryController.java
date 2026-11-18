@@ -3,11 +3,13 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.controller;
 import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.dto.BookCategoryRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.dto.BookCategoryResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.service.IBookCategoryServ;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/${api.version}/bookCategory")
@@ -19,8 +21,9 @@ public class BookCategoryController {
     }
 
     @GetMapping()
-    public List<BookCategoryResponse> findAll(){
-        return bookCategoryServ.findAll();
+    public ResponseEntity<PageResponse<BookCategoryResponse>> findAll(@PageableDefault(size = 20, sort = "categoryName",
+            direction = Sort.Direction.DESC) Pageable pageable){
+        return ResponseEntity.ok(bookCategoryServ.findAll(pageable));
     }
 
     @GetMapping("/{id}")
