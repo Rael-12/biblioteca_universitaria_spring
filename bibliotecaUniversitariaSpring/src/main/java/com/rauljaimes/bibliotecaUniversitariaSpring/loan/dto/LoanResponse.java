@@ -9,7 +9,6 @@ public record LoanResponse(
         Long id,
         UserResponse user,
         BookResponse book,
-        Boolean active,
         LocalDate dateLoan,
         LocalDate dueDate,
         LocalDate returnDate,

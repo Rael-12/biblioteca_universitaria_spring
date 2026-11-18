@@ -1,5 +1,6 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.user.entity;
 
+import com.rauljaimes.bibliotecaUniversitariaSpring.user.enums.Semester;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -16,14 +17,15 @@ import java.time.LocalDate;
 public class StudentEntity extends UserEntity {
 
     @Column(nullable = false, length = 45)
-    private String semester;
+    @Enumerated(EnumType.STRING)
+    private Semester semester;
 
     @Column(nullable = false, length = 100)
     private String degree;
 
     public static StudentEntity createStudent(
             String firstName, String lastName, String email,
-            String phoneNumber, LocalDate birthDate, String semester,
+            String phoneNumber, LocalDate birthDate, Semester semester,
             String degree
     ){
         return StudentEntity.builder()

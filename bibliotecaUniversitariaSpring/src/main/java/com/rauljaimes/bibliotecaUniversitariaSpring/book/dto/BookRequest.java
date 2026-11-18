@@ -30,6 +30,7 @@ public record BookRequest(
         String isbn,
 
         @NotNull(message = "The category is required")
-        String category
+        @Positive(message = "The categoryID must be positive")
+        Long categoryId
 ) {
 }

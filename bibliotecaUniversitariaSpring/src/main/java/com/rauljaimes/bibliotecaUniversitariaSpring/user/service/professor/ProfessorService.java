@@ -6,20 +6,25 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.ProfessorEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.exceptions.UserNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.mapper.IUserMapper;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.repository.ProfessorRepository;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageMapper;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProfessorService implements IProfessorService {
     private final ProfessorRepository profeRepository;
     private final IUserMapper userMapper;
+    private final PageMapper pageMapper;
 
-    public ProfessorService(ProfessorRepository profeRepository, IUserMapper userMapper) {
+    public ProfessorService(ProfessorRepository profeRepository, IUserMapper userMapper, PageMapper pageMapper) {
         this.profeRepository = profeRepository;
         this.userMapper = userMapper;
+        this.pageMapper = pageMapper;
     }
 
     @Transactional
@@ -33,10 +38,11 @@ public class ProfessorService implements IProfessorService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ProfessorResponse> findAll() {
-        return profeRepository.findAll().stream()
-                .map(userMapper::professorEntityToResponse)
-                .toList();
+    public PageResponse<ProfessorResponse> findAll(Pageable pageable) {
+        Page<ProfessorResponse> professors = profeRepository.findAll(pageable)
+                .map(userMapper::professorEntityToResponse);
+
+        return pageMapper.toPageResponse(professors);
     }
 
     @Transactional(readOnly = true)
@@ -48,10 +54,11 @@ public class ProfessorService implements IProfessorService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ProfessorResponse> findByDepartment(String department) {
-        return profeRepository.findByDepartment(department).stream()
-                .map(userMapper::professorEntityToResponse)
-                .toList();
+    public PageResponse<ProfessorResponse> findByDepartment(String department, Pageable pageable) {
+        Page<ProfessorResponse> professors = profeRepository.findByDepartment(department, pageable)
+                .map(userMapper::professorEntityToResponse);
+
+        return pageMapper.toPageResponse(professors);
     }
 
     @Transactional

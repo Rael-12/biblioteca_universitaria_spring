@@ -3,12 +3,15 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.user.controller;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.user.UserRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.dto.user.UserResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.service.user.IUserService;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,18 +24,23 @@ public class UserController {
     }
 
     @GetMapping()
-    public List<UserResponse> findAll() {
-        return userService.findAll();
+    public ResponseEntity<PageResponse<UserResponse>> findAll(@PageableDefault(size = 20, sort = "firstName",
+            direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(userService.findAll(pageable));
     }
 
     @GetMapping("/firstName/{firstName}")
-    public List<UserResponse> findByFirstName(@PathVariable String firstName) {
-        return userService.findByFirstName(firstName);
+    public ResponseEntity<PageResponse<UserResponse>> findByFirstName(@PathVariable String firstName,
+                                                                      @PageableDefault(size = 20, sort = "firstName",
+                                                                              direction = Sort.Direction.ASC) Pageable pageable) {
+        return ResponseEntity.ok(userService.findByFirstName(firstName, pageable));
     }
 
     @GetMapping("/lastname/{lastname}")
-    public List<UserResponse> findByLastName(@PathVariable String lastName) {
-        return userService.findByLastName(lastName);
+        public ResponseEntity<PageResponse<UserResponse>> findByLastName(@PathVariable String lastName,
+                                                                         @PageableDefault(size = 20, sort = "firstName",
+                                                                                 direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(userService.findByLastName(lastName, pageable));
     }
 
     @GetMapping("email/{email}")
