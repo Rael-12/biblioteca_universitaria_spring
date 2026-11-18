@@ -24,10 +24,10 @@ public class BookService implements IBookService {
     private final IBookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookCategoryRepo bookCategoryRepo;
-    private final PageMapper<BookResponse> pageMapper;
+    private final PageMapper pageMapper;
 
     public BookService(IBookRepository bookRepository, BookMapper bookMapper,
-                       BookCategoryRepo bookCategoryRepo, PageMapper<BookResponse> pageMapper) {
+                       BookCategoryRepo bookCategoryRepo, PageMapper pageMapper) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
         this.bookCategoryRepo = bookCategoryRepo;

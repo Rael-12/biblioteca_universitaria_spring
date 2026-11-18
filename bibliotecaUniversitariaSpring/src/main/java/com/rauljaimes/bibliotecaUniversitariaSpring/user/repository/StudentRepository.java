@@ -1,6 +1,8 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.user.repository;
 
 import com.rauljaimes.bibliotecaUniversitariaSpring.user.entity.StudentEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -8,9 +10,9 @@ import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
 
-    List<StudentEntity> findBySemester(String semester);
+    Page<StudentEntity> findBySemester(String semester, Pageable pageable);
 
-    List<StudentEntity> findByDegree(String degree);
+    Page<StudentEntity> findByDegree(String degree, Pageable pageable);
 
-    Optional<StudentEntity> findBySemesterAndDegree(String semester, String degree);
+    Page<StudentEntity> findBySemesterAndDegree(String semester, String degree, Pageable pageable);
 }
