@@ -2,6 +2,8 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.book.service;
 
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookResponse;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageResponse;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.Optional;
 @Service
 public interface IBookService {
 
-     BookResponse createBook(BookRequest br);
+    BookResponse createBook(BookRequest br);
 
     void deleteBook(Long id);
 
@@ -20,15 +22,15 @@ public interface IBookService {
 
     Optional<BookResponse> findByISBN(String isbn);
 
-    List<BookResponse> findByYear(Integer year);
+    PageResponse<BookResponse> findByYear(Integer year, Pageable pageable);
 
-    List<BookResponse> findByAuthor(String author);
+    PageResponse<BookResponse> findByAuthor(String author, Pageable pageable);
 
-    List<BookResponse> findByGenre(String genre);
+    PageResponse<BookResponse> findByGenre(String genre, Pageable pageable);
 
-    List<BookResponse> findAll();
+    PageResponse<BookResponse> findAll(Pageable pageable);
 
-    void sotfDelete(Long id);
+    void softDelete(Long id);
 
     Optional<BookResponse> updateBook(BookRequest bookRequest, Long id);
 

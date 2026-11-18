@@ -1,10 +1,11 @@
 package com.rauljaimes.bibliotecaUniversitariaSpring.book.repository;
 
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.entity.BookEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -12,13 +13,13 @@ public interface IBookRepository extends JpaRepository<BookEntity, Long> {
 
    Optional<BookEntity> findByTitleContainingIgnoreCase(String title);
 
-   Optional<BookEntity> findByAuthor(String author);
+   Page<BookEntity> findByAuthor(String author, Pageable pageable);
 
    Optional<BookEntity> findByIsbn(String isbn);
 
-   List<BookEntity> findByYearPublication(Integer yearPublication);
+   Page<BookEntity> findByYearPublication(Integer yearPublication, Pageable pageable);
 
    //boolean isActive(Long id);
 
-   List<BookEntity> findByCategory(String category);
+   Page<BookEntity> findByCategory(String category, Pageable pageable);
 }

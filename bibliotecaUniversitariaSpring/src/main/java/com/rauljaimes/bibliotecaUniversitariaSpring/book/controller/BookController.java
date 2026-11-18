@@ -3,12 +3,15 @@ package com.rauljaimes.bibliotecaUniversitariaSpring.book.controller;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookRequest;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.dto.BookResponse;
 import com.rauljaimes.bibliotecaUniversitariaSpring.book.service.IBookService;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -42,23 +45,38 @@ public class BookController {
     }
 
     @GetMapping()
-    public List<BookResponse> findAll() {
-        return bookService.findAll();
+    public ResponseEntity<PageResponse<BookResponse>> findAll(@PageableDefault(
+            size = 20,
+            sort = "title",
+            direction = Sort.Direction.DESC) Pageable pageable) {
+
+        return ResponseEntity.ok(bookService.findAll(pageable));
     }
 
     @GetMapping("/year/{id}")
-    public List<BookResponse> findByYear(@PathVariable Integer id) {
-        return bookService.findByYear(id);
+    public ResponseEntity<PageResponse<BookResponse>> findByYear(@PathVariable Integer id,
+                                                                 @PageableDefault(size = 20,
+                                                                         sort = "title",
+                                                                         direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(bookService.findByYear(id, pageable));
     }
 
     @GetMapping("/author/{author}")
-    public List<BookResponse> findByAuthor(@PathVariable String author) {
-        return bookService.findByAuthor(author);
+    public ResponseEntity<PageResponse<BookResponse>> findByAuthor(@PathVariable String author,
+                                                                   @PageableDefault(
+                                                                           size = 20,
+                                                                           sort = "title",
+                                                                           direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(bookService.findByAuthor(author, pageable));
     }
 
     @GetMapping("/genre/{genre}")
-    public List<BookResponse> findByGenre(@PathVariable String genre) {
-        return bookService.findByGenre(genre);
+    public ResponseEntity<PageResponse<BookResponse>> findByGenre(@PathVariable String genre,
+                                                                  @PageableDefault(
+                                                                          size = 20,
+                                                                          sort = "title",
+                                                                          direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(bookService.findByGenre(genre, pageable));
     }
 
     @PutMapping("/loan/{id}")
@@ -75,7 +93,7 @@ public class BookController {
 
     @PutMapping("/softDelete/{id}")
     public ResponseEntity<Void> softDelete(@PathVariable Long id) {
-        bookService.sotfDelete(id);
+        bookService.softDelete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

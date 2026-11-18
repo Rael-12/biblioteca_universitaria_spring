@@ -9,6 +9,10 @@ import com.rauljaimes.bibliotecaUniversitariaSpring.book.repository.IBookReposit
 import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.entity.BookCategoryEntity;
 import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.exceptions.BookCategoryNotFoundException;
 import com.rauljaimes.bibliotecaUniversitariaSpring.bookCategory.repository.BookCategoryRepo;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageMapper;
+import com.rauljaimes.bibliotecaUniversitariaSpring.utils.PageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +24,14 @@ public class BookService implements IBookService {
     private final IBookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookCategoryRepo bookCategoryRepo;
+    private final PageMapper<BookResponse> pageMapper;
 
-    public BookService(IBookRepository bookRepository, BookMapper bookMapper, BookCategoryRepo bookCategoryRepo) {
+    public BookService(IBookRepository bookRepository, BookMapper bookMapper,
+                       BookCategoryRepo bookCategoryRepo, PageMapper<BookResponse> pageMapper) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
         this.bookCategoryRepo = bookCategoryRepo;
+        this.pageMapper = pageMapper;
     }
 
     @Transactional
@@ -67,39 +74,40 @@ public class BookService implements IBookService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookResponse> findByYear(Integer year) {
-        return bookRepository.findByYearPublication(year).stream()
-                .map(bookMapper::entityToResponse)
-                .toList();
+    public PageResponse<BookResponse> findByYear(Integer year, Pageable pageable) {
+         Page<BookResponse> books = bookRepository.findByYearPublication(year, pageable)
+                 .map(bookMapper::entityToResponse);
+
+         return pageMapper.toPageResponse(books);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookResponse> findByAuthor(String author) {
-        return bookRepository.findByAuthor(author).stream()
-                .map(bookMapper::entityToResponse)
-                .toList();
+    public PageResponse<BookResponse> findByAuthor(String author, Pageable pageable) {
+        Page<BookResponse> books = bookRepository.findByAuthor(author, pageable)
+                .map(bookMapper::entityToResponse);
+        return pageMapper.toPageResponse(books);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookResponse> findByGenre(String genre) {
-        return bookRepository.findByCategory(genre).stream()
-                .map(bookMapper::entityToResponse)
-                .toList();
+    public PageResponse<BookResponse> findByGenre(String genre, Pageable pageable) {
+        Page<BookResponse> books =  bookRepository.findByCategory(genre, pageable)
+                .map(bookMapper::entityToResponse);
+        return pageMapper.toPageResponse(books);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookResponse> findAll() {
-        return bookRepository.findAll().stream()
-                .map(bookMapper::entityToResponse)
-                .toList();
+    public PageResponse<BookResponse> findAll(Pageable pageable) {
+        Page<BookResponse> books = bookRepository.findAll(pageable)
+                .map(bookMapper::entityToResponse);
+        return pageMapper.toPageResponse(books);
     }
 
     @Transactional
     @Override
-    public void sotfDelete(Long id) {
+    public void softDelete(Long id) {
         BookEntity book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Book not found"));
 
